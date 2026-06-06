@@ -115,6 +115,7 @@
     let pointers = new Map();
     let gesture = null;
     let needsDraw = true;
+    let canvasMetrics = { cssWidth: 0, cssHeight: 0, ratio: 1 };
 
     function normalizeText(value) {
       return String(value || "").trim().replace(/\s+/g, " ");
@@ -282,13 +283,28 @@
       needsDraw = true;
     }
 
-    function resizeCanvas() {
-      const ratio = window.devicePixelRatio || 1;
+    function resizeGraphCanvasToDisplaySize() {
       const rect = canvas.getBoundingClientRect();
-      canvas.width = Math.max(1, Math.round(rect.width * ratio));
-      canvas.height = Math.max(1, Math.round(rect.height * ratio));
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      needsDraw = true;
+      const ratio = Math.max(1, window.devicePixelRatio || 1);
+      const cssWidth = Math.max(1, Math.round(rect.width));
+      const cssHeight = Math.max(1, Math.round(rect.height));
+      const width = Math.max(1, Math.round(cssWidth * ratio));
+      const height = Math.max(1, Math.round(cssHeight * ratio));
+      const changed = canvas.width !== width || canvas.height !== height || canvasMetrics.ratio !== ratio;
+      if (changed) {
+        canvas.width = width;
+        canvas.height = height;
+        canvasMetrics = { cssWidth, cssHeight, ratio };
+        needsDraw = true;
+      }
+      return canvasMetrics;
+    }
+
+    function clearGraphCanvas(metrics) {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#f7faf7";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
     function worldToScreen(point) {
@@ -300,11 +316,12 @@
     }
 
     function draw() {
+      const metrics = resizeGraphCanvasToDisplaySize();
       if (!needsDraw) return;
       needsDraw = false;
-      const rect = canvas.getBoundingClientRect();
-      ctx.clearRect(0, 0, rect.width, rect.height);
+      clearGraphCanvas(metrics);
       ctx.save();
+      ctx.scale(metrics.ratio, metrics.ratio);
       ctx.translate(transform.x, transform.y);
       ctx.scale(transform.scale, transform.scale);
       ctx.lineWidth = 1.2 / transform.scale;
@@ -563,8 +580,17 @@
       location.reload();
     });
 
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
+    window.addEventListener("resize", () => {
+      resizeGraphCanvasToDisplaySize();
+      needsDraw = true;
+    });
+    window.addEventListener("orientationchange", () => {
+      window.setTimeout(() => {
+        resizeGraphCanvasToDisplaySize();
+        needsDraw = true;
+      }, 80);
+    });
+    resizeGraphCanvasToDisplaySize();
     seedLayout();
     refreshConnectionSelect();
     updateStatus();
