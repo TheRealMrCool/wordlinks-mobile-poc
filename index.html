@@ -933,7 +933,7 @@
         return;
       }
       if (!addition.wordRow || nodesById.has(addition.wordRow.word_id)) return;
-      const anchor = nodesById.get(addition.connectionRow?.source_word_id || selectedId);
+      const position = positionForAddition(addition);
       const node = {
         id: addition.wordRow.word_id,
         label: addition.wordRow.display_text,
@@ -948,8 +948,8 @@
         status: "review",
         notes: addition.wordRow.notes,
         mobile: true,
-        x: anchor ? anchor.x + 45 : 0,
-        y: anchor ? anchor.y + 45 : 0,
+        x: position.x,
+        y: position.y,
         vx: 0,
         vy: 0,
         index: nodes.length,
@@ -1141,6 +1141,76 @@
 
     function screenToWorld(point) {
       return { x: (point.x - transform.x) / transform.scale, y: (point.y - transform.y) / transform.scale };
+    }
+
+    function currentViewportWorldCenter() {
+      const rect = canvas.getBoundingClientRect();
+      return screenToWorld({ x: rect.width / 2, y: rect.height / 2 });
+    }
+
+    function averagePoints(points) {
+      if (!points.length) return currentViewportWorldCenter();
+      const total = points.reduce((sum, point) => ({ x: sum.x + point.x, y: sum.y + point.y }), { x: 0, y: 0 });
+      return { x: total.x / points.length, y: total.y / points.length };
+    }
+
+    function radialOffset(index, total, radius) {
+      const count = Math.max(1, total);
+      const ring = Math.floor(index / count);
+      const angle = -Math.PI / 2 + (Math.PI * 2 * (index % count)) / count;
+      const distance = radius + ring * 28;
+      return { x: Math.cos(angle) * distance, y: Math.sin(angle) * distance };
+    }
+
+    function normalizedPosition(position) {
+      if (!position || !Number.isFinite(Number(position.x)) || !Number.isFinite(Number(position.y))) return null;
+      return { x: Number(position.x), y: Number(position.y) };
+    }
+
+    function positionForAddition(addition) {
+      const stored = normalizedPosition(addition.position);
+      if (stored) return stored;
+      const wordId = addition.wordRow?.word_id;
+      const anchors = [];
+      const row = addition.connectionRow;
+      if (row) {
+        [row.source_word_id, row.target_word_id].forEach((id) => {
+          if (id && id !== wordId && nodesById.has(id)) anchors.push(nodesById.get(id));
+        });
+      }
+      if (!anchors.length && selectedId && nodesById.has(selectedId)) anchors.push(nodesById.get(selectedId));
+      const base = averagePoints(anchors);
+      const index = Math.max(0, changes.additions.indexOf(addition));
+      const offset = radialOffset(index % 12, 12, anchors.length ? 76 : 92);
+      return { x: base.x + offset.x, y: base.y + offset.y };
+    }
+
+    function positionsForPreviewWords(wordRows, connectionRows) {
+      const positions = new Map();
+      const newIds = new Set(wordRows.map((row) => row.word_id));
+      const center = currentViewportWorldCenter();
+      const count = Math.max(1, wordRows.length);
+      wordRows.forEach((row, index) => {
+        const anchors = [];
+        connectionRows.forEach((connectionRow) => {
+          let otherId = "";
+          if (connectionRow.source_word_id === row.word_id) otherId = connectionRow.target_word_id;
+          if (connectionRow.target_word_id === row.word_id) otherId = connectionRow.source_word_id;
+          if (!otherId) return;
+          if (!newIds.has(otherId) && nodesById.has(otherId)) {
+            anchors.push(nodesById.get(otherId));
+          } else if (positions.has(otherId)) {
+            anchors.push(positions.get(otherId));
+          }
+        });
+        const base = anchors.length ? averagePoints(anchors) : center;
+        const offset = radialOffset(index, count, anchors.length ? 76 : 92);
+        positions.set(row.word_id, {
+          x: Number((base.x + offset.x).toFixed(2)),
+          y: Number((base.y + offset.y).toFixed(2)),
+        });
+      });
+      return positions;
     }
 
     function roundedRect(context, x, y, width, height, radius) {
@@ -1841,8 +1911,9 @@
       const appliedAt = new Date().toISOString();
       const generatedWordIds = [];
       const generatedEdgeIds = [];
+      const wordPositions = positionsForPreviewWords(preview.wordRows, preview.connectionRows);
       preview.wordRows.forEach((wordRow) => {
-        const addition = { createdAt: appliedAt, source: "qc", wordRow, connectionRow: null };
+        const addition = { createdAt: appliedAt, source: "qc", wordRow, connectionRow: null, position: wordPositions.get(wordRow.word_id) || null };
         changes.additions.push(addition);
         applyAddition(addition);
         generatedWordIds.push(wordRow.word_id);
