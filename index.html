@@ -7,43 +7,48 @@
   <title>Wordlinks Mobile POC</title>
   <style>
     :root {
-      color-scheme: light;
-      --ink: #14201e;
-      --muted: #5d6b67;
-      --line: #d5ded9;
-      --paper: #fbfcfa;
-      --panel: #ffffff;
-      --accent: #0f766e;
-      --accent-2: #b3261e;
-      --node: #f5c542;
-      --review: #2f7dd1;
-      --edge: rgba(35, 50, 47, 0.25);
+      color-scheme: dark;
+      --ink: #eef5f2;
+      --muted: #9fb0aa;
+      --line: #33433e;
+      --paper: #111816;
+      --panel: #17211e;
+      --panel-2: #1e2a26;
+      --accent: #45d0bd;
+      --accent-2: #ff9a90;
+      --node: #d9b84d;
+      --review: #4f9cf0;
+      --graph-bg: #0f1715;
+      --edge: rgba(164, 184, 176, 0.26);
+      --edge-highlight: rgba(69, 208, 189, 0.92);
+      --edge-selected: rgba(255, 222, 128, 0.98);
+      --neighbor: #86efac;
     }
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
     html, body { margin: 0; min-height: 100%; width: 100%; max-width: 100%; overflow: hidden; background: var(--paper); color: var(--ink); font: 15px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     body { overflow: hidden; }
     button, input, select, textarea { font: inherit; font-size: 16px; line-height: 1.25; max-width: 100%; }
-    button { min-height: 42px; border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 7px; padding: 9px 11px; }
+    button { min-height: 42px; border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); border-radius: 7px; padding: 9px 11px; }
     button:disabled { opacity: .48; }
-    button.primary { border-color: var(--accent); background: var(--accent); color: white; font-weight: 700; }
-    button.danger { border-color: #e7b8b4; color: var(--accent-2); }
-    input, select, textarea { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 7px; padding: 10px; background: white; color: var(--ink); }
+    button.primary { border-color: var(--accent); background: #0e8f82; color: white; font-weight: 700; }
+    button.danger { border-color: #6d3b37; color: var(--accent-2); }
+    input, select, textarea { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 7px; padding: 10px; background: #101715; color: var(--ink); }
     label { display: grid; gap: 5px; color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
     .app { width: 100%; max-width: 100%; height: 100dvh; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
-    header { padding: calc(10px + env(safe-area-inset-top)) 12px 10px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.96); }
+    header { padding: calc(10px + env(safe-area-inset-top)) 12px 10px; border-bottom: 1px solid var(--line); background: rgba(17,24,22,.96); }
     .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     h1 { margin: 0; font-size: 18px; letter-spacing: 0; }
     .meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
     .search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-top: 10px; }
     main { position: relative; min-height: 0; }
-    canvas { width: 100%; height: 100%; display: block; touch-action: none; background: #f7faf7; }
-    .hint { position: absolute; left: 10px; top: 10px; padding: 6px 8px; background: rgba(255,255,255,.84); border: 1px solid var(--line); border-radius: 7px; color: var(--muted); font-size: 12px; pointer-events: none; }
-    .sheet { max-height: 46dvh; overflow: auto; padding: 10px 12px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: rgba(255,255,255,.98); }
-    .tabs { position: sticky; top: -12px; z-index: 5; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: -18px -12px 10px; padding: 8px 12px 0; background: linear-gradient(to bottom, rgba(247,250,247,0) 0 7px, rgba(255,255,255,.98) 7px); border-bottom: 1px solid var(--line); }
-    .tab { min-height: 42px; padding: 8px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background: #f5f8f6; color: var(--muted); box-shadow: 0 -1px 0 rgba(20,32,30,.04); }
+    canvas { width: 100%; height: 100%; display: block; touch-action: none; background: var(--graph-bg); }
+    .hint { position: absolute; left: 10px; top: 10px; padding: 6px 8px; background: rgba(23,33,30,.82); border: 1px solid var(--line); border-radius: 7px; color: var(--muted); font-size: 12px; pointer-events: none; }
+    .sheet { max-height: 46dvh; overflow: auto; padding: 10px 12px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: rgba(23,33,30,.98); }
+    .tabs { position: sticky; top: -12px; z-index: 5; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: -18px -12px 10px; padding: 8px 12px 0; background: linear-gradient(to bottom, rgba(15,23,21,0) 0 7px, rgba(23,33,30,.98) 7px); border-bottom: 1px solid var(--line); }
+    .tab { min-height: 42px; padding: 8px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background: #111a17; color: var(--muted); box-shadow: 0 -1px 0 rgba(0,0,0,.28); }
     .tab + .tab { border-left: 0; }
-    .tab.active { position: relative; top: 1px; border-color: var(--line); border-bottom-color: #fff; background: #fff; color: var(--accent); font-weight: 700; box-shadow: 0 -2px 0 #fff; }
+    .tab.active { position: relative; top: 1px; border-color: var(--line); border-bottom-color: var(--panel); background: var(--panel); color: var(--accent); font-weight: 700; box-shadow: 0 -2px 0 var(--panel); }
     .tab-panel { display: grid; gap: 10px; }
     .selected { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; padding-bottom: 10px; border-bottom: 1px solid var(--line); margin-bottom: 10px; }
     .selected-main { display: grid; gap: 7px; min-width: 0; }
@@ -51,11 +56,11 @@
     .selected p { margin: 0; min-width: 0; max-width: 100%; overflow: hidden; color: var(--muted); font-size: 13px; white-space: nowrap; text-overflow: ellipsis; }
     .summary { display: grid; gap: 7px; }
     .summary-actions { display: flex; gap: 8px; }
-    .full-row { display: grid; gap: 8px; padding: 10px; margin-bottom: 10px; border: 1px solid var(--line); border-radius: 7px; background: white; }
+    .full-row { display: grid; gap: 8px; padding: 10px; margin-bottom: 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); }
     .full-row-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
     .full-row-head h3 { margin: 0; font-size: 16px; }
     .field-list { display: grid; gap: 7px; }
-    .field { display: grid; gap: 2px; padding-top: 7px; border-top: 1px solid #edf1ee; }
+    .field { display: grid; gap: 2px; padding-top: 7px; border-top: 1px solid #26352f; }
     .field:first-child { border-top: 0; padding-top: 0; }
     .field-name { color: var(--muted); font-size: 12px; font-weight: 700; }
     .field-value { white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -66,27 +71,43 @@
     .qc-text { min-height: 98px; resize: vertical; }
     .qc-overrides { min-height: 46px; resize: vertical; }
     .qc-issues { display: grid; gap: 6px; color: var(--muted); font-size: 13px; scroll-margin: 72px; }
-    .issue { padding: 7px 8px; border: 1px solid var(--line); border-radius: 7px; background: #fff; }
-    .issue.blocking { border-color: #e7b8b4; color: var(--accent-2); }
+    .issue { padding: 7px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); }
+    .issue.blocking { border-color: #74433e; color: var(--accent-2); }
     .domain-manager { display: grid; gap: 9px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
-    .domain-list { max-height: 168px; overflow: auto; border: 1px solid var(--line); border-radius: 7px; background: #fff; }
-    .domain-card { width: 100%; display: block; min-height: 40px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; text-align: left; background: #fff; }
+    .domain-list-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 36px; gap: 7px; align-items: stretch; }
+    .domain-list-gutter { border: 1px dashed var(--line); border-radius: 7px; background: rgba(255,255,255,.03); }
+    .domain-list { max-height: 168px; overflow: auto; border: 1px solid var(--line); border-radius: 7px; background: #101715; }
+    .domain-card { width: 100%; display: block; min-height: 36px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; text-align: left; background: #101715; }
     .domain-card:last-child { border-bottom: 0; }
-    .domain-form { display: grid; gap: 9px; padding: 10px; border: 1px solid var(--line); border-radius: 7px; background: #fff; }
+    .domain-form { display: grid; gap: 9px; padding: 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); }
     .domain-status { min-height: 17px; color: var(--muted); font-size: 12px; }
-    .modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: end center; padding: 14px; background: rgba(20,32,30,.38); }
-    .modal { width: min(680px, 100%); max-height: 82dvh; overflow: auto; display: grid; gap: 10px; padding: 14px; border-radius: 8px; background: white; }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: end center; padding: 14px; background: rgba(0,0,0,.58); }
+    .modal { width: min(680px, 100%); max-height: 82dvh; overflow: auto; display: grid; gap: 10px; padding: 14px; border-radius: 8px; background: var(--panel); }
     .modal h2 { margin: 0; font-size: 18px; }
     .modal pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.35 ui-monospace, SFMono-Regular, Consolas, monospace; }
-    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: sticky; bottom: 0; background: white; padding-top: 6px; }
+    .modal-warning { margin: 0; padding: 8px; border: 1px solid var(--line); border-radius: 7px; background: #101715; color: var(--muted); font: 12px/1.35 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .modal-warning.has-warnings { border-color: #b7791f; background: rgba(180, 105, 17, .18); color: #f6d58a; }
+    .modal-warning strong { display: block; margin-bottom: 4px; font: 700 12px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; text-transform: uppercase; letter-spacing: .03em; color: inherit; }
+    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: sticky; bottom: 0; background: var(--panel); padding-top: 6px; }
     .form { display: grid; gap: 9px; min-width: 0; }
     .form-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 9px; min-width: 0; }
     .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .results { max-height: 132px; overflow: auto; margin-top: 8px; border: 1px solid var(--line); border-radius: 7px; background: white; }
-    .result { width: 100%; display: block; min-height: 38px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; text-align: left; background: white; }
+    .results { max-height: 132px; overflow: auto; margin-top: 8px; border: 1px solid var(--line); border-radius: 7px; background: #101715; }
+    .result { width: 100%; display: block; min-height: 36px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; text-align: left; background: #101715; }
     .result:last-child { border-bottom: 0; }
     .export { margin-top: 8px; min-height: 92px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 16px; }
     .status { margin-top: 6px; color: var(--muted); font-size: 12px; min-height: 17px; }
+    .view-button { white-space: nowrap; min-height: 38px; padding: 7px 9px; font-size: 13px; }
+    .traversal { display: grid; gap: 6px; margin-top: 4px; }
+    .traversal h3 { margin: 0; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+    .traverse-row { width: 100%; min-height: 36px; display: block; padding: 7px 9px; text-align: left; background: #101715; }
+    .traverse-row small { color: var(--muted); }
+    .app[data-layout="graph"] { grid-template-rows: auto minmax(0, 1fr) auto; }
+    .app[data-layout="graph"] .sheet { max-height: 56px; overflow: hidden; padding-bottom: 0; }
+    .app[data-layout="graph"] .tab-panel { display: none !important; }
+    .app[data-layout="info"] { grid-template-rows: auto 72px minmax(0, 1fr); }
+    .app[data-layout="info"] .sheet { max-height: none; height: 100%; }
+    .app[data-layout="info"] .hint { display: none; }
     @media (min-width: 760px) {
       .app { grid-template-columns: minmax(0, 1fr) 360px; grid-template-rows: auto minmax(0, 1fr); }
       header { grid-column: 1 / -1; }
@@ -95,10 +116,11 @@
   </style>
 </head>
 <body>
-  <div class="app">
+  <div id="appRoot" class="app" data-layout="split">
     <header>
       <div class="top">
         <h1>Wordlinks Mobile</h1>
+        <button id="viewModeButton" class="view-button" type="button">View: Split</button>
         <div class="meta"><span id="changeCount">0</span> changes</div>
       </div>
       <div class="search-row">
@@ -155,7 +177,10 @@
           <label>Find domain
             <input id="domainSearch" type="search" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Search domains">
           </label>
-          <div id="domainList" class="domain-list"></div>
+          <div class="domain-list-wrap">
+            <div id="domainList" class="domain-list"></div>
+            <div class="domain-list-gutter" aria-hidden="true"></div>
+          </div>
           <form id="domainForm" class="domain-form" hidden>
             <label>Domain ID
               <input id="domainId" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="vehicles">
@@ -192,6 +217,7 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="qcModalTitle">
       <h2 id="qcModalTitle">Apply QC preview?</h2>
       <pre id="qcPreviewText"></pre>
+      <div id="qcPreviewWarnings" class="modal-warning"></div>
       <div class="modal-actions">
         <button id="continueQcButton" type="button">Continue editing</button>
         <button id="applyQcButton" class="primary" type="button">Apply</button>
@@ -260,6 +286,8 @@
     let inspectorDirty = false;
     let inspectorInitialSerialized = "";
     let pendingQcPreview = null;
+    const layoutModes = ["split", "graph", "info"];
+    let layoutMode = "split";
 
     function normalizeText(value) {
       return String(value || "").trim().replace(/\s+/g, " ");
@@ -288,6 +316,24 @@
       if (text.includes(marker)) return text;
       return text ? `${text} | ${marker}` : marker;
     }
+
+    function mobileWritableStatus(value) {
+      return normalizeText(value).toLowerCase() === "deprecated" ? "deprecated" : "review";
+    }
+
+    function isDeprecatedStatus(value) {
+      return normalizeText(value).toLowerCase() === "deprecated";
+    }
+
+    // Keep these schema enum values in sync with schema_rules.md. Mobile status editing is intentionally narrower.
+    const SCHEMA_ENUMS = {
+      wordFamiliarity: ["universal", "common", "uncommon", "specialized"],
+      connectionType: ["anagrammatic", "antonymic", "compound", "component_of", "functional", "homophonic", "idiomatic", "semantic", "sequential"],
+      direction: ["both", "forward"],
+      strength: ["weak", "medium", "strong"],
+      connectionFamiliarity: ["universal", "common", "uncommon", "specialized", "inherited"],
+    };
+    const MOBILE_STATUS_OPTIONS = ["review", "deprecated"];
 
     function rowFromColumns(source, columns) {
       const row = {};
@@ -355,6 +401,25 @@
       return displayValue(value).split("|").map((part) => part.trim()).filter(Boolean);
     }
 
+    function isNodeGraphVisible(node) {
+      return !!node && !isDeprecatedStatus(node.status);
+    }
+
+    function isEdgeGraphVisible(edge) {
+      const source = nodesById.get(edge?.from);
+      const target = nodesById.get(edge?.to);
+      return !!edge && !isDeprecatedStatus(edge.status) && isNodeGraphVisible(source) && isNodeGraphVisible(target);
+    }
+
+    function edgeHiddenReason(edge) {
+      if (!edge) return "";
+      if (isDeprecatedStatus(edge.status)) return "deprecated";
+      const source = nodesById.get(edge.from);
+      const target = nodesById.get(edge.to);
+      if (isDeprecatedStatus(source?.status) || isDeprecatedStatus(target?.status)) return "endpoint deprecated";
+      return "";
+    }
+
     function loadChanges() {
       try {
         const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -388,6 +453,25 @@
       document.getElementById("otherPanel").hidden = name !== "other";
     }
 
+    function applyLayoutMode(mode) {
+      layoutMode = mode;
+      document.getElementById("appRoot").dataset.layout = mode;
+      document.getElementById("viewModeButton").textContent = `View: ${mode[0].toUpperCase()}${mode.slice(1)}`;
+      window.setTimeout(() => {
+        resizeGraphCanvasToDisplaySize();
+        needsDraw = true;
+      }, 0);
+      window.setTimeout(() => {
+        resizeGraphCanvasToDisplaySize();
+        needsDraw = true;
+      }, 180);
+    }
+
+    function cycleLayoutMode() {
+      const next = layoutModes[(layoutModes.indexOf(layoutMode) + 1) % layoutModes.length];
+      applyLayoutMode(next);
+    }
+
     function makeWordRow(id, text) {
       const row = {};
       BASE_DATA.wordColumns.forEach((column) => row[column] = "");
@@ -406,7 +490,7 @@
       row.edge_id = edgeId;
       row.source_word_id = sourceId;
       row.target_word_id = targetId;
-      row.connection_type = "associated";
+      row.connection_type = "semantic";
       row.direction = "both";
       row.strength = "medium";
       row.status = "review";
@@ -610,7 +694,7 @@
         note: "notes",
         form: "forms",
       };
-      const allowed = new Set(["connection_type", "direction", "strength", "familiarity", "clusters", "specialization_domains", "hints", "reasoning", "notes", "forms"]);
+      const allowed = new Set(["connection_type", "direction", "strength", "familiarity", "clusters", "specialization_domains", "hints", "reasoning", "notes", "forms", "status"]);
       const overrides = {};
       const warnings = [];
       tokenizeOverrideText(text).forEach((token) => {
@@ -632,10 +716,27 @@
             if (!domainExists(part)) warnings.push(`Unknown domain/cluster '${part}'.`);
           });
         }
-        if (key === "direction" && value && !["both", "forward", "reverse"].includes(value)) warnings.push(`Unknown direction '${value}'.`);
-        if (key === "connection_type" && value && !["semantic", "functional", "homophonic", "anagrammatic", "idiomatic", "sequential", "antonymic", "compound", "component_of", "associated"].includes(value)) warnings.push(`Unknown connection_type '${value}'.`);
-        if (key === "strength" && value && !["weak", "medium", "strong"].includes(value)) warnings.push(`Unknown strength '${value}'.`);
-        if (key === "familiarity" && value && !["universal", "common", "uncommon", "specialized", "inherited"].includes(value)) warnings.push(`Unknown familiarity '${value}'.`);
+        if (key === "direction" && value && !SCHEMA_ENUMS.direction.includes(value)) {
+          warnings.push(`Unknown direction '${value}'.`);
+          delete overrides.direction;
+        }
+        if (key === "connection_type" && value && !SCHEMA_ENUMS.connectionType.includes(value)) {
+          warnings.push(`Unknown connection_type '${value}'.`);
+          delete overrides.connection_type;
+        }
+        if (key === "strength" && value && !SCHEMA_ENUMS.strength.includes(value)) {
+          warnings.push(`Unknown strength '${value}'.`);
+          delete overrides.strength;
+        }
+        if (key === "familiarity" && value && ![...new Set([...SCHEMA_ENUMS.wordFamiliarity, ...SCHEMA_ENUMS.connectionFamiliarity])].includes(value)) {
+          warnings.push(`Unknown familiarity '${value}'.`);
+          delete overrides.familiarity;
+        }
+        if (key === "status" && value) overrides.status = mobileWritableStatus(value);
+        if (key === "status" && value && !["review", "deprecated"].includes(normalizeText(value).toLowerCase())) {
+          warnings.push(`Mobile status '${value}' is not saveable. Using review.`);
+          overrides.status = "review";
+        }
         if (rawKey === "domain" || rawKey === "domains" || rawKey === "specialization_domains" || rawKey === "specialization_domain") {
           overrides.clusters = overrides.clusters || value;
         }
@@ -654,10 +755,11 @@
     }
 
     function applyWordOverrides(row, overrides) {
-      ["familiarity", "clusters", "specialization_domains", "hints", "notes", "forms"].forEach((field) => {
+      ["clusters", "specialization_domains", "hints", "notes", "forms"].forEach((field) => {
         if (overrides[field] !== undefined) row[field] = overrides[field];
       });
-      row.status = "review";
+      if (SCHEMA_ENUMS.wordFamiliarity.includes(overrides.familiarity)) row.familiarity = overrides.familiarity;
+      row.status = mobileWritableStatus(overrides.status);
       row.notes = appendMarker(row.notes, MOBILE_NOTE);
       if (!splitLoose(row.forms).includes(row.display_text)) {
         row.forms = row.forms ? `${row.forms}|${row.display_text}` : row.display_text;
@@ -665,11 +767,12 @@
     }
 
     function applyConnectionOverrides(row, overrides, skipDirection = false) {
-      ["connection_type", "direction", "strength", "familiarity", "clusters", "specialization_domains", "hints", "reasoning", "notes"].forEach((field) => {
+      ["connection_type", "direction", "strength", "clusters", "specialization_domains", "hints", "reasoning", "notes"].forEach((field) => {
         if (skipDirection && field === "direction") return;
         if (overrides[field] !== undefined) row[field] = overrides[field];
       });
-      row.status = "review";
+      if (SCHEMA_ENUMS.connectionFamiliarity.includes(overrides.familiarity)) row.familiarity = overrides.familiarity;
+      row.status = mobileWritableStatus(overrides.status);
       row.notes = appendMarker(row.notes, MOBILE_NOTE);
     }
 
@@ -945,7 +1048,7 @@
         specialization_domains: [],
         clusters: [],
         hints: "",
-        status: "review",
+        status: mobileWritableStatus(addition.wordRow.status),
         notes: addition.wordRow.notes,
         mobile: true,
         x: position.x,
@@ -976,7 +1079,7 @@
           clusters: [],
           hints: "",
           reasoning: "",
-          status: "review",
+          status: mobileWritableStatus(addition.connectionRow.status),
           notes: addition.connectionRow.notes,
           mobile: true,
         };
@@ -1073,14 +1176,16 @@
     }
 
     function tickLayout() {
-      const degree = new Map(nodes.map((node) => [node.id, 0]));
-      edges.forEach((edge) => {
+      const visibleNodes = nodes.filter(isNodeGraphVisible);
+      const visibleEdges = edges.filter(isEdgeGraphVisible);
+      const degree = new Map(visibleNodes.map((node) => [node.id, 0]));
+      visibleEdges.forEach((edge) => {
         degree.set(edge.from, (degree.get(edge.from) || 0) + 1);
         degree.set(edge.to, (degree.get(edge.to) || 0) + 1);
       });
-      for (let i = 0; i < nodes.length; i += 1) {
-        for (let j = i + 1; j < nodes.length; j += 1) {
-          const a = nodes[i], b = nodes[j];
+      for (let i = 0; i < visibleNodes.length; i += 1) {
+        for (let j = i + 1; j < visibleNodes.length; j += 1) {
+          const a = visibleNodes[i], b = visibleNodes[j];
           let dx = b.x - a.x, dy = b.y - a.y;
           let distance = Math.hypot(dx, dy) || 1;
           const force = Math.min(80, 1800 / (distance * distance));
@@ -1089,7 +1194,7 @@
           b.vx += dx * force; b.vy += dy * force;
         }
       }
-      edges.forEach((edge) => {
+      visibleEdges.forEach((edge) => {
         const a = nodesById.get(edge.from), b = nodesById.get(edge.to);
         if (!a || !b) return;
         const desired = 78 + Math.min(80, ((degree.get(a.id) || 0) + (degree.get(b.id) || 0)) * 2);
@@ -1100,7 +1205,7 @@
         a.vx += dx * force; a.vy += dy * force;
         b.vx -= dx * force; b.vy -= dy * force;
       });
-      nodes.forEach((node) => {
+      visibleNodes.forEach((node) => {
         node.vx += -node.x * 0.0008;
         node.vy += -node.y * 0.0008;
         node.vx *= 0.82;
@@ -1131,7 +1236,7 @@
     function clearGraphCanvas(metrics) {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#f7faf7";
+      ctx.fillStyle = cssVar("--graph-bg") || "#0f1715";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
@@ -1266,27 +1371,31 @@
       ctx.translate(transform.x, transform.y);
       ctx.scale(transform.scale, transform.scale);
       ctx.lineWidth = 1.2 / transform.scale;
-      edges.forEach((edge) => {
+      const highlights = selectedGraphHighlights();
+      edges.filter(isEdgeGraphVisible).forEach((edge) => {
         const a = nodesById.get(edge.from), b = nodesById.get(edge.to);
         if (!a || !b) return;
         const selected = selectedType === "edge" && edge.id === selectedId;
-        ctx.strokeStyle = selected ? "rgba(17,24,39,.9)" : edge.mobile ? "rgba(47,125,209,.72)" : "rgba(35,50,47,.22)";
-        ctx.lineWidth = (selected ? 3 : edge.mobile ? 2 : 1.2) / transform.scale;
+        const incident = highlights.edgeIds.has(edge.id);
+        ctx.strokeStyle = selected ? cssVar("--edge-selected") : incident ? cssVar("--edge-highlight") : edge.mobile ? "rgba(79,156,240,.76)" : cssVar("--edge");
+        ctx.lineWidth = (selected ? 3.6 : incident ? 2.8 : edge.mobile ? 2 : 1.2) / transform.scale;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
         ctx.stroke();
       });
-      nodes.forEach((node) => {
+      nodes.filter(isNodeGraphVisible).forEach((node) => {
         const selected = selectedType === "node" && node.id === selectedId;
+        const endpoint = selectedType === "edge" && highlights.nodeIds.has(node.id);
+        const neighbor = highlights.neighborIds.has(node.id);
         const box = measureNodeBox(node);
-        ctx.fillStyle = node.mobile ? "#2f7dd1" : "#f5c542";
-        ctx.strokeStyle = selected ? "#111" : "rgba(20,32,30,.55)";
-        ctx.lineWidth = selected ? 2.5 / transform.scale : 1 / transform.scale;
+        ctx.fillStyle = selected || endpoint ? cssVar("--edge-selected") : neighbor ? cssVar("--neighbor") : node.mobile ? cssVar("--review") : cssVar("--node");
+        ctx.strokeStyle = selected || endpoint ? cssVar("--accent") : "rgba(238,245,242,.55)";
+        ctx.lineWidth = selected || endpoint ? 2.8 / transform.scale : neighbor ? 1.8 / transform.scale : 1 / transform.scale;
         roundedRect(ctx, box.x, box.y, box.width, box.height, 12);
         ctx.fill();
         ctx.stroke();
-        ctx.fillStyle = node.mobile ? "#fff" : "#14201e";
+        ctx.fillStyle = node.mobile && !selected && !endpoint && !neighbor ? "#ffffff" : "#101715";
         ctx.font = "13px system-ui, sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -1305,7 +1414,7 @@
 
     function fitGraph(targetIds) {
       const rect = canvas.getBoundingClientRect();
-      const visible = targetIds?.length ? targetIds.map((id) => nodesById.get(id)).filter(Boolean) : nodes;
+      const visible = targetIds?.length ? targetIds.map((id) => nodesById.get(id)).filter(isNodeGraphVisible) : nodes.filter(isNodeGraphVisible);
       if (!visible.length || !rect.width || !rect.height) return;
       const xs = visible.map((node) => node.x);
       const ys = visible.map((node) => node.y);
@@ -1360,6 +1469,47 @@
       return parts.map((part) => displayValue(part).trim()).filter(Boolean).join(" | ");
     }
 
+    function edgeConnector(edge) {
+      return edge?.direction === "both" ? "-" : "→";
+    }
+
+    function edgeDisplayLabel(edge) {
+      const source = nodesById.get(edge.from);
+      const target = nodesById.get(edge.to);
+      const sourceText = source?.display_text || edge.source_word_id || edge.from;
+      const targetText = target?.display_text || edge.target_word_id || edge.to;
+      return `${sourceText}${edgeConnector(edge)}${targetText}`;
+    }
+
+    function cssVar(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function selectedGraphHighlights() {
+      const nodeIds = new Set();
+      const neighborIds = new Set();
+      const edgeIds = new Set();
+      if (selectedType === "node" && selectedId) {
+        if (!isNodeGraphVisible(nodesById.get(selectedId))) return { nodeIds, neighborIds, edgeIds };
+        nodeIds.add(selectedId);
+        edges.forEach((edge) => {
+          if (!isEdgeGraphVisible(edge)) return;
+          if (edge.from !== selectedId && edge.to !== selectedId) return;
+          edgeIds.add(edge.id);
+          neighborIds.add(edge.from === selectedId ? edge.to : edge.from);
+        });
+      }
+      if (selectedType === "edge" && selectedId) {
+        const edge = edgesById.get(selectedId);
+        if (isEdgeGraphVisible(edge)) {
+          edgeIds.add(edge.id);
+          nodeIds.add(edge.from);
+          nodeIds.add(edge.to);
+        }
+      }
+      return { nodeIds, neighborIds, edgeIds };
+    }
+
     function setSelectedMeta(text) {
       const meta = document.getElementById("selectedMeta");
       meta.textContent = text;
@@ -1368,8 +1518,40 @@
 
     function showCompactSummary() {
       const summary = document.getElementById("selectedDetails");
-      summary.innerHTML = "";
-      summary.hidden = true;
+      summary.innerHTML = renderTraversalSummary();
+      summary.hidden = !summary.innerHTML;
+    }
+
+    function renderTraversalSummary() {
+      if (selectedType === "node") {
+        const selectedNode = nodesById.get(selectedId);
+        const selectedHidden = !isNodeGraphVisible(selectedNode);
+        const incident = edges
+          .filter((edge) => edge.from === selectedId || edge.to === selectedId)
+          .filter((edge) => selectedHidden || isEdgeGraphVisible(edge))
+          .slice()
+          .sort((a, b) => edgeDisplayLabel(a).localeCompare(edgeDisplayLabel(b)))
+          .slice(0, 32);
+        if (!incident.length) return '<div class="issue">No connections.</div>';
+        return [
+          '<div class="traversal"><h3>Connections</h3>',
+          ...incident.map((edge) => `<button class="traverse-row" type="button" data-edge-id="${escapeHtml(edge.id)}">${escapeHtml(edgeDisplayLabel(edge))}<br><small>${escapeHtml(compactMetadata([edge.connection_type, edgeHiddenReason(edge), edge.clusters]))}</small></button>`),
+          '</div>',
+        ].join("");
+      }
+      if (selectedType === "edge") {
+        const edge = edgesById.get(selectedId);
+        if (!edge) return "";
+        const source = nodesById.get(edge.from);
+        const target = nodesById.get(edge.to);
+        return [
+          '<div class="traversal"><h3>Words</h3>',
+          `<button class="traverse-row" type="button" data-node-id="${escapeHtml(edge.from)}">${escapeHtml(source?.display_text || edge.source_word_id || edge.from)}<br><small>${escapeHtml(edge.from)}</small></button>`,
+          `<button class="traverse-row" type="button" data-node-id="${escapeHtml(edge.to)}">${escapeHtml(target?.display_text || edge.target_word_id || edge.to)}<br><small>${escapeHtml(edge.to)}</small></button>`,
+          '</div>',
+        ].join("");
+      }
+      return "";
     }
 
     function updateInspectToggle() {
@@ -1419,13 +1601,38 @@
       if (!selection?.row) return;
       document.getElementById("fullRowTitle").textContent = selection.title;
       const multiline = new Set(["forms", "hints", "notes", "reasoning"]);
+      const enumOptions = {
+        word: {
+          familiarity: SCHEMA_ENUMS.wordFamiliarity,
+          status: MOBILE_STATUS_OPTIONS,
+        },
+        connection: {
+          connection_type: SCHEMA_ENUMS.connectionType,
+          direction: SCHEMA_ENUMS.direction,
+          strength: SCHEMA_ENUMS.strength,
+          familiarity: SCHEMA_ENUMS.connectionFamiliarity,
+          status: MOBILE_STATUS_OPTIONS,
+        },
+      };
+      const renderSelect = (column, options, rawValue, fallbackValue = "") => {
+        const current = displayValue(rawValue);
+        const selectedValue = options.includes(current) ? current : fallbackValue;
+        const currentOption = current && !options.includes(current)
+          ? `<option value="${escapeHtml(current)}" selected>current: ${escapeHtml(current)}</option>`
+          : "";
+        const blankOption = !current && !fallbackValue ? '<option value="" selected></option>' : "";
+        return `<select data-field="${escapeHtml(column)}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">${currentOption}${blankOption}${options.map((option) => `<option value="${escapeHtml(option)}"${option === selectedValue ? " selected" : ""}>${escapeHtml(option)}</option>`).join("")}</select>`;
+      };
       document.getElementById("fullRowFields").dataset.rowType = selection.rowType;
       document.getElementById("fullRowFields").dataset.rowId = selection.rowId;
       document.getElementById("fullRowFields").innerHTML = [
         '<p class="edit-note">Mobile edits are saved as review rows and should be verified on desktop later.</p>',
         ...selection.columns.map((column) => {
+          const options = enumOptions[selection.rowType]?.[column];
           const value = escapeHtml(displayValue(selection.row[column]));
-          const control = multiline.has(column)
+          const control = options
+            ? renderSelect(column, options, column === "status" ? mobileWritableStatus(selection.row[column]) : selection.row[column], column === "status" ? "review" : "")
+            : multiline.has(column)
             ? `<textarea data-field="${escapeHtml(column)}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">${value}</textarea>`
             : `<input data-field="${escapeHtml(column)}" value="${value}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">`;
           return `<label class="field"><span class="field-name">${escapeHtml(column)}</span>${control}</label>`;
@@ -1435,6 +1642,7 @@
       document.getElementById("saveEditButton").addEventListener("click", saveInspectorEdit);
       document.getElementById("cancelEditButton").addEventListener("click", cancelInspectorEdit);
       document.getElementById("fullRowFields").oninput = updateInspectorDirty;
+      document.getElementById("fullRowFields").onchange = updateInspectorDirty;
       document.getElementById("fullRowView").hidden = false;
       inspectorInitialSerialized = serializeInspectorRow();
       setInspectorDirty(false);
@@ -1497,7 +1705,7 @@
       const rowId = fields.dataset.rowId;
       const columns = rowType === "connection" ? BASE_DATA.connectionColumns : BASE_DATA.wordColumns;
       const editedRow = collectInspectorRow(columns);
-      editedRow.status = "review";
+      editedRow.status = mobileWritableStatus(editedRow.status);
       editedRow.notes = appendMarker(editedRow.notes, "[[mobile_edit]]");
       const now = new Date().toISOString();
 
@@ -1547,16 +1755,17 @@
       document.getElementById("selectedTitle").textContent = node.display_text;
       const metadata = compactMetadata(
         [
+          isDeprecatedStatus(node.status) ? "deprecated" : "",
           compactListValue(node.clusters),
           nonRedundantDomains(node.specialization_domains, node.clusters),
           previewText(node.notes),
         ]
       );
       setSelectedMeta(metadata);
-      document.getElementById("centerButton").disabled = false;
+      document.getElementById("centerButton").disabled = !isNodeGraphVisible(node);
       showCompactSummary();
       if (!sameSelection || !inspectorDirty) showFullRow();
-      if (center) {
+      if (center && isNodeGraphVisible(node)) {
         const rect = canvas.getBoundingClientRect();
         transform.x = rect.width / 2 - node.x * transform.scale;
         transform.y = rect.height / 2 - node.y * transform.scale;
@@ -1574,12 +1783,13 @@
       const target = nodesById.get(edge.to);
       const sourceText = source?.display_text || edge.source_word_id;
       const targetText = target?.display_text || edge.target_word_id;
-      const connector = edge.direction === "both" ? "-" : "->";
+      const connector = edgeConnector(edge);
       selectedType = "edge";
       selectedId = id;
       document.getElementById("selectedTitle").textContent = `${sourceText}${connector}${targetText}`;
       const metadata = compactMetadata(
         [
+          edgeHiddenReason(edge),
           edge.connection_type,
           compactListValue(edge.clusters),
           nonRedundantDomains(edge.specialization_domains, edge.clusters),
@@ -1607,6 +1817,7 @@
       const world = screenToWorld({ x: clientX - rect.left, y: clientY - rect.top });
       for (let index = nodes.length - 1; index >= 0; index -= 1) {
         const node = nodes[index];
+        if (!isNodeGraphVisible(node)) continue;
         const box = fallbackNodeBox(node);
         if (world.x >= box.x && world.x <= box.x + box.width && world.y >= box.y && world.y <= box.y + box.height) {
           return { type: "node", item: node };
@@ -1614,7 +1825,7 @@
       }
       let bestEdge = null;
       let bestDistance = 12 / transform.scale;
-      edges.forEach((edge) => {
+      edges.filter(isEdgeGraphVisible).forEach((edge) => {
         const a = nodesById.get(edge.from);
         const b = nodesById.get(edge.to);
         if (!a || !b) return;
@@ -1730,7 +1941,7 @@
       document.getElementById("domainList").innerHTML = rows.length
         ? rows.map((row) => {
           const flags = [row.mobile ? "mobile add" : "", row.mobileEdit ? "mobile edit" : ""].filter(Boolean).join(", ");
-          return `<button class="domain-card" type="button" data-domain-id="${escapeHtml(row.domain_id)}">${escapeHtml(row.domain_name || row.domain_id)}<br><small>${escapeHtml(row.domain_id)}${flags ? ` | ${escapeHtml(flags)}` : ""}</small></button>`;
+          return `<button class="domain-card" type="button" data-domain-id="${escapeHtml(row.domain_id)}">${escapeHtml(row.domain_id)}${flags ? `<br><small>${escapeHtml(flags)}</small>` : ""}</button>`;
         }).join("")
         : '<div class="issue">No matching domains.</div>';
     }
@@ -1839,10 +2050,22 @@
         box.innerHTML = "";
         return;
       }
-      const matches = nodes.filter((node) =>
-        [node.word_id, node.display_text, node.canonical_text, node.forms].join(" ").toLowerCase().includes(query)
-      ).slice(0, 24);
-      box.innerHTML = matches.map((node) => `<button class="result" type="button" data-id="${node.id.replace(/"/g, "&quot;")}">${node.display_text}<br><small>${node.word_id}</small></button>`).join("");
+      const wordMatches = nodes.filter((node) =>
+        [node.word_id, node.display_text, node.canonical_text, node.forms, node.status].join(" ").toLowerCase().includes(query)
+      ).slice(0, 16);
+      const edgeMatches = edges.filter((edge) =>
+        [edge.edge_id, edge.from, edge.to, edgeDisplayLabel(edge), edge.connection_type, edge.clusters, edge.notes, edge.status, edgeHiddenReason(edge)].join(" ").toLowerCase().includes(query)
+      ).slice(0, Math.max(0, 24 - wordMatches.length));
+      box.innerHTML = [
+        ...wordMatches.map((node) => {
+          const status = isDeprecatedStatus(node.status) ? " deprecated" : "";
+          return `<button class="result" type="button" data-id="${node.id.replace(/"/g, "&quot;")}">${escapeHtml(node.word_id)}${status ? `<br><small>${status.trim()}</small>` : ""}</button>`;
+        }),
+        ...edgeMatches.map((edge) => {
+          const hidden = edgeHiddenReason(edge);
+          return `<button class="result" type="button" data-edge-id="${escapeHtml(edge.id)}">${escapeHtml(edge.edge_id || edge.id)} ${escapeHtml(edgeDisplayLabel(edge))}${hidden ? `<br><small>${escapeHtml(hidden)}</small>` : ""}</button>`;
+        }),
+      ].join("");
       box.hidden = false;
     }
 
@@ -1872,6 +2095,7 @@
       renderQcIssues(preview.issues, preview.warnings);
       if (!preview.canApply) return;
       document.getElementById("qcPreviewText").textContent = formatQcPreview(preview);
+      renderQcPreviewWarnings(preview.warnings);
       document.getElementById("qcModal").hidden = false;
     }
 
@@ -1885,11 +2109,12 @@
         lines.push("Global overrides:", preview.globalOverridesText.trim(), "");
       }
       lines.push("[Words to add]");
-      lines.push(...(preview.wordRows.length ? preview.wordRows.map((row) => `${row.display_text} (${row.word_id})`) : ["(none)"]));
+      lines.push(...(preview.wordRows.length ? preview.wordRows.map((row) => `${row.display_text} (${row.word_id})${isDeprecatedStatus(row.status) ? " | status=deprecated" : ""}`) : ["(none)"]));
       lines.push("", "[Connections to add]");
       lines.push(...(preview.connectionRows.length ? preview.connectionRows.map((row) => {
         const details = [
           row.connection_type,
+          isDeprecatedStatus(row.status) ? "status=deprecated" : "",
           `direction=${row.direction}`,
           row.strength ? `strength=${row.strength}` : "",
           row.familiarity ? `familiarity=${row.familiarity}` : "",
@@ -1898,11 +2123,16 @@
           row.hints ? `hints=${row.hints}` : "",
           row.notes && row.notes !== MOBILE_NOTE ? `notes=${row.notes}` : "",
         ].filter(Boolean).join(" | ");
-        return `${row.edge_id}: ${row.source_word_id} ${row.direction === "both" ? "-" : "->"} ${row.target_word_id} | ${details}`;
+        return `${row.edge_id}: ${row.source_word_id} ${row.direction === "both" ? "-" : "→"} ${row.target_word_id} | ${details}`;
       }) : ["(none)"]));
-      lines.push("", "[Warnings]");
-      lines.push(...(preview.warnings.length ? preview.warnings : ["(none)"]));
       return lines.join("\n");
+    }
+
+    function renderQcPreviewWarnings(warnings) {
+      const box = document.getElementById("qcPreviewWarnings");
+      const hasWarnings = warnings.length > 0;
+      box.classList.toggle("has-warnings", hasWarnings);
+      box.innerHTML = `<strong>Warnings</strong>${escapeHtml((hasWarnings ? warnings : ["(none)"]).join("\n"))}`;
     }
 
     function applyQcPreview() {
@@ -1952,14 +2182,26 @@
     }
 
     document.getElementById("searchResults").addEventListener("click", (event) => {
+      const edgeButton = event.target.closest("button[data-edge-id]");
       const button = event.target.closest("button[data-id]");
-      if (!button) return;
-      selectNode(button.dataset.id, true);
+      if (edgeButton) selectEdge(edgeButton.dataset.edgeId);
+      else if (button) selectNode(button.dataset.id, true);
+      else return;
       document.getElementById("searchResults").hidden = true;
+    });
+    document.getElementById("selectedDetails").addEventListener("click", (event) => {
+      const edgeButton = event.target.closest("button[data-edge-id]");
+      if (edgeButton) {
+        selectEdge(edgeButton.dataset.edgeId);
+        return;
+      }
+      const nodeButton = event.target.closest("button[data-node-id]");
+      if (nodeButton) selectNode(nodeButton.dataset.nodeId, true);
     });
     document.querySelectorAll(".tab").forEach((button) => {
       button.addEventListener("click", () => switchTab(button.dataset.tab));
     });
+    document.getElementById("viewModeButton").addEventListener("click", cycleLayoutMode);
     document.getElementById("addDomainButton").addEventListener("click", startAddDomain);
     document.getElementById("domainSearch").addEventListener("input", renderDomainList);
     document.getElementById("domainList").addEventListener("click", (event) => {
@@ -2073,7 +2315,7 @@
         if (rowType === "connection") {
           const source = nodesById.get(row.source_word_id)?.display_text || row.source_word_id;
           const target = nodesById.get(row.target_word_id)?.display_text || row.target_word_id;
-          const connector = row.direction === "both" ? "-" : "->";
+          const connector = row.direction === "both" ? "-" : "→";
           return `${row.edge_id || "(new connection)"} ${source}${connector}${target} | ${compactMetadata([row.connection_type, row.clusters, row.notes])}`;
         }
         return `${row.word_id || "(new word)"} ${row.display_text || ""} | ${compactMetadata([row.clusters, row.specialization_domains, row.notes])}`;
@@ -2122,7 +2364,7 @@
         const row = edit.editedRow || {};
         const source = nodesById.get(row.source_word_id)?.display_text || row.source_word_id || "?";
         const target = nodesById.get(row.target_word_id)?.display_text || row.target_word_id || "?";
-        const connector = row.direction === "both" ? "-" : "->";
+        const connector = row.direction === "both" ? "-" : "→";
         return `${edit.rowId} ${source}${connector}${target}`;
       }
       const row = edit.editedRow || {};
@@ -2191,6 +2433,7 @@
         needsDraw = true;
       }, 80);
     });
+    applyLayoutMode(layoutMode);
     resizeGraphCanvasToDisplaySize();
     clearSelection();
     seedLayout();
