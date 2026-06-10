@@ -136,7 +136,7 @@
       </div>
       <div class="search-row">
         <input id="searchInput" type="search" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Search words">
-        <select id="pinRadiusSelect" class="pin-radius" aria-label="Pin radius">
+        <select id="pinRadiusSelect" class="pin-radius" aria-label="Pin and Tighten radius">
           <option value="0">0</option>
           <option value="1">1</option>
           <option value="2">2</option>
@@ -1826,12 +1826,17 @@
     function tightenSelectedNeighbors() {
       const anchor = selectedType === "node" ? nodesById.get(selectedId) : null;
       if (!anchor || !isNodeGraphVisible(anchor)) return;
-      const neighbors = visibleDirectNeighborIds(anchor.id).map((id) => nodesById.get(id)).filter(Boolean);
-      if (!neighbors.length) return;
-      const distances = neighbors.map((node) => Math.hypot(node.x - anchor.x, node.y - anchor.y));
+      const radius = Number(document.getElementById("pinRadiusSelect")?.value || 0);
+      if (radius <= 0) return;
+      const candidates = visibleNodeIdsWithinRadius(anchor.id, radius)
+        .filter((id) => id !== anchor.id)
+        .map((id) => nodesById.get(id))
+        .filter((node) => node && isNodeGraphVisible(node));
+      if (!candidates.length) return;
+      const distances = candidates.map((node) => Math.hypot(node.x - anchor.x, node.y - anchor.y));
       const maxDistance = Math.max(...distances);
       const closeEnoughDistance = maxDistance * TIGHTEN_CLOSE_FRACTION;
-      neighbors.forEach((node, index) => {
+      candidates.forEach((node, index) => {
         if (distances[index] <= closeEnoughDistance) return;
         node.x = anchor.x + (node.x - anchor.x) * TIGHTEN_MOVE_FACTOR;
         node.y = anchor.y + (node.y - anchor.y) * TIGHTEN_MOVE_FACTOR;
@@ -1848,12 +1853,13 @@
       if (!button) return;
       const selectedNode = selectedType === "node" ? nodesById.get(selectedId) : null;
       const canPin = !!selectedNode && isNodeGraphVisible(selectedNode);
+      const selectedRadius = Number(radiusSelect?.value || 0);
       const isActive = !!pinnedNodeId;
       button.disabled = !isActive && !canPin;
       button.textContent = isActive ? "Release" : "Pin";
       button.classList.toggle("pin-active", isActive);
       if (radiusSelect) radiusSelect.disabled = isActive;
-      if (tightenButton) tightenButton.disabled = isActive || !canPin;
+      if (tightenButton) tightenButton.disabled = isActive || !canPin || selectedRadius <= 0;
     }
 
     function maintainPinnedNodeAnchor() {
@@ -3023,6 +3029,7 @@
       if (pinnedNodeId) releasePinnedNode();
       fitGraph();
     });
+    document.getElementById("pinRadiusSelect").addEventListener("change", updatePinButton);
     document.getElementById("pinButton").addEventListener("click", togglePinNode);
     document.getElementById("tightenButton").addEventListener("click", tightenSelectedNeighbors);
     document.getElementById("centerButton").addEventListener("click", () => selectedType === "node" && selectedId && selectNode(selectedId, true));
