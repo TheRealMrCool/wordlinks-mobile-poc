@@ -29,23 +29,25 @@
     html, body { margin: 0; min-height: 100%; width: 100%; max-width: 100%; overflow: hidden; background: var(--paper); color: var(--ink); font: 15px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     body { overflow: hidden; }
     button, input, select, textarea { font: inherit; font-size: 16px; line-height: 1.25; max-width: 100%; }
-    button { min-height: 42px; border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); border-radius: 7px; padding: 9px 11px; }
+    button { min-height: 42px; border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); border-radius: 7px; padding: 9px 11px; touch-action: manipulation; }
     button:disabled { opacity: .48; }
     button.primary { border-color: var(--accent); background: #0e8f82; color: white; font-weight: 700; }
     button.danger { border-color: #6d3b37; color: var(--accent-2); }
+    button.pin-active { border-color: #9b7cff; background: rgba(93,75,170,.32); color: #d9d0ff; font-weight: 700; }
     input, select, textarea { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 7px; padding: 10px; background: #101715; color: var(--ink); }
+    select { touch-action: manipulation; }
     label { display: grid; gap: 5px; color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
-    .app { width: 100%; max-width: 100%; height: 100dvh; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .app { width: 100%; max-width: 100%; height: 100dvh; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; touch-action: manipulation; }
     header { padding: calc(10px + env(safe-area-inset-top)) 12px 10px; border-bottom: 1px solid var(--line); background: rgba(17,24,22,.96); }
     .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     h1 { margin: 0; font-size: 18px; letter-spacing: 0; }
     .meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
-    .search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-top: 10px; }
+    .search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto auto; gap: 8px; margin-top: 10px; }
     main { position: relative; min-height: 0; }
     canvas { width: 100%; height: 100%; display: block; touch-action: none; background: var(--graph-bg); }
-    .hint { position: absolute; left: 10px; top: 10px; padding: 6px 8px; background: rgba(23,33,30,.82); border: 1px solid var(--line); border-radius: 7px; color: var(--muted); font-size: 12px; pointer-events: none; }
+    .pin-radius { width: 52px; padding-inline: 8px; }
     .sheet { max-height: 46dvh; overflow: auto; padding: 10px 12px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: rgba(23,33,30,.98); }
-    .tabs { position: sticky; top: -12px; z-index: 5; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: -18px -12px 10px; padding: 8px 12px 0; background: linear-gradient(to bottom, rgba(15,23,21,0) 0 7px, rgba(23,33,30,.98) 7px); border-bottom: 1px solid var(--line); }
+    .tabs { position: sticky; top: -12px; z-index: 5; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: -18px -12px 10px; padding: 8px 12px 0; background: linear-gradient(to bottom, rgba(15,23,21,0) 0 7px, rgba(23,33,30,.98) 7px); border-bottom: 1px solid var(--line); }
     .tab { min-height: 42px; padding: 8px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background: #111a17; color: var(--muted); box-shadow: 0 -1px 0 rgba(0,0,0,.28); }
     .tab + .tab { border-left: 0; }
     .tab.active { position: relative; top: 1px; border-color: var(--line); border-bottom-color: var(--panel); background: var(--panel); color: var(--accent); font-weight: 700; box-shadow: 0 -2px 0 var(--panel); }
@@ -73,6 +75,16 @@
     .qc-issues { display: grid; gap: 6px; color: var(--muted); font-size: 13px; scroll-margin: 72px; }
     .issue { padding: 7px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); }
     .issue.blocking { border-color: #74433e; color: var(--accent-2); }
+    .filter-controls { display: grid; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+    .filter-row { display: grid; grid-template-columns: auto minmax(0, .72fr) minmax(104px, 1fr) auto; gap: 8px; align-items: end; }
+    .filter-row.simple { grid-template-columns: auto minmax(0, 1fr); }
+    .filter-row > span { align-self: center; color: var(--muted); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+    .filter-row input, .filter-row select { min-height: 42px; }
+    .filter-status { min-height: 17px; color: var(--muted); font-size: 12px; }
+    .filter-results { display: grid; gap: 6px; }
+    .filter-result-count { color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+    .filter-result { width: 100%; min-height: 42px; display: block; padding: 8px 9px; text-align: left; background: #101715; }
+    .filter-result small { display: block; margin-top: 2px; color: var(--muted); }
     .domain-manager { display: grid; gap: 9px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
     .domain-list-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 36px; gap: 7px; align-items: stretch; }
     .domain-list-gutter { border: 1px dashed var(--line); border-radius: 7px; background: rgba(255,255,255,.03); }
@@ -107,7 +119,6 @@
     .app[data-layout="graph"] .tab-panel { display: none !important; }
     .app[data-layout="info"] { grid-template-rows: auto 72px minmax(0, 1fr); }
     .app[data-layout="info"] .sheet { max-height: none; height: 100%; }
-    .app[data-layout="info"] .hint { display: none; }
     @media (min-width: 760px) {
       .app { grid-template-columns: minmax(0, 1fr) 360px; grid-template-rows: auto minmax(0, 1fr); }
       header { grid-column: 1 / -1; }
@@ -125,18 +136,25 @@
       </div>
       <div class="search-row">
         <input id="searchInput" type="search" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Search words">
+        <select id="pinRadiusSelect" class="pin-radius" aria-label="Pin radius">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+        </select>
+        <button id="pinButton" type="button" disabled>Pin</button>
+        <button id="tightenButton" type="button" disabled>Tighten</button>
         <button id="fitButton" type="button" aria-label="Fit graph">Fit</button>
       </div>
       <div id="searchResults" class="results" hidden></div>
     </header>
     <main>
       <canvas id="graphCanvas"></canvas>
-      <div class="hint">Drag to pan. Pinch to zoom. Tap a word.</div>
     </main>
     <section class="sheet">
       <div class="tabs" role="tablist" aria-label="Mobile tools">
         <button class="tab active" type="button" data-tab="inspect">Inspect</button>
         <button class="tab" type="button" data-tab="qc">QC</button>
+        <button class="tab" type="button" data-tab="filter">Filter</button>
         <button class="tab" type="button" data-tab="other">Other</button>
       </div>
       <div id="inspectPanel" class="tab-panel">
@@ -171,6 +189,32 @@
           <button id="copyQcButton" type="button" hidden>Copy QC text</button>
         </div>
       </div>
+      <div id="filterPanel" class="tab-panel" hidden>
+        <details class="filter-controls" open>
+          <summary>Filter controls</summary>
+          <div class="filter-row">
+            <span>Degree:</span>
+            <input id="degreeFilterInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" aria-label="Degree">
+            <select id="degreeFilterMode" aria-label="Degree filter mode">
+              <option value="exactly">exactly</option>
+              <option value="below">and below</option>
+              <option value="above">and above</option>
+            </select>
+            <button id="clearFilterButton" type="button">Clear</button>
+          </div>
+          <div class="filter-row simple">
+            <span>From selected:</span>
+            <input id="rangeFilterInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" aria-label="From selected">
+          </div>
+          <div class="filter-row simple">
+            <span>Cluster:</span>
+            <input id="clusterFilterInput" type="text" list="clusterFilterOptions" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" aria-label="Cluster">
+            <datalist id="clusterFilterOptions"></datalist>
+          </div>
+          <div id="filterStatus" class="filter-status"></div>
+        </details>
+        <div id="filterResults" class="filter-results"></div>
+      </div>
       <div id="otherPanel" class="tab-panel" hidden>
         <div class="domain-manager">
           <button id="addDomainButton" class="primary" type="button">Add domain</button>
@@ -204,6 +248,7 @@
           </form>
           <div id="domainStatus" class="domain-status"></div>
         </div>
+        <button id="reinitLayoutButton" type="button">Reinit layout</button>
         <div class="actions">
           <button id="exportButton" type="button">Copy/export mobile changes</button>
           <button id="resetButton" class="danger" type="button">Reset mobile changes</button>
@@ -286,8 +331,51 @@
     let inspectorDirty = false;
     let inspectorInitialSerialized = "";
     let pendingQcPreview = null;
+    const filterState = { degreeText: "", degree: null, mode: "exactly", rangeText: "", range: null, clusterText: "", cluster: "", message: "" };
+    const NODE_REPULSION_RADIUS = 132;
+    const NODE_REPULSION_FORCE = 0.028;
+    const EDGE_LAYOUT_FORCES_ENABLED = false;
+    const HUB_SCAFFOLD_COUNT = 10;
+    const HUB_SCAFFOLD_TICKS = 560;
+    const HUB_SCAFFOLD_RADIUS_MIN = 730;
+    const HUB_SCAFFOLD_RADIUS_MAX = 1950;
+    const HUB_SCAFFOLD_RADIUS_PER_ROOT_NODE = 107;
+    const HUB_NEIGHBOR_SEED_RADIUS = 150;
+    const HUB_EDGE_TARGET_LENGTH = 130;
+    const HUB_EDGE_PULL = 0.016;
+    const INIT_EDGE_CLUSTER_TICKS = 560;
+    const INIT_REPULSION_SETTLE_TICKS = 160;
+    const INITIAL_SYNC_LAYOUT_TICKS = 50;
+    const INIT_EDGE_TARGET_LENGTH = 105;
+    const INIT_EDGE_PULL = 0.008;
+    const MAX_COMFORTABLE_EDGE_LENGTH = 220;
+    const LONG_EDGE_PULL = 0.0015;
+    const EDGE_COMFORT_MAX = 5000;
+    const CENTERING_FORCE = 0;
+    const LAYOUT_DAMPING = 0.82;
+    const MAX_GRAPH_COORD = 20000;
+    const MAX_NODE_VELOCITY = 24;
+    const MAX_NODE_DISPLACEMENT = 18;
+    const MAX_BAD_LAYOUT_NODES = 12;
+    const PIN_NODE_FILL = "#9b7cff";
+    const PIN_EDGE_COLOR = "rgba(155,124,255,.92)";
+    const PIN_NODE_STROKE = "#d9d0ff";
+    const RANGE_CONTEXT_NODE_FILL = "rgba(50,138,128,.82)";
+    const RANGE_CONTEXT_EDGE_COLOR = "rgba(37,135,126,.72)";
+    const TIGHTEN_CLOSE_FRACTION = 0.30;
+    const TIGHTEN_MOVE_FACTOR = 0.75;
+    let pinnedNodeId = "";
+    let pinnedScreenAnchors = new Map();
+    let pinnedNodeIds = new Set();
+    let layoutPaused = false;
+    let hubScaffoldTicksRemaining = 0;
+    let hubScaffoldAnchors = new Map();
+    let initClusterTicksRemaining = 0;
+    let initRepulsionSettleTicksRemaining = 0;
+    let fitAfterInitWarmStart = false;
     const layoutModes = ["split", "graph", "info"];
     let layoutMode = "split";
+    console.info("Wordlinks mobile layout diagnostic: edge forces disabled =", !EDGE_LAYOUT_FORCES_ENABLED, "centering:", CENTERING_FORCE);
 
     function normalizeText(value) {
       return String(value || "").trim().replace(/\s+/g, " ");
@@ -420,6 +508,216 @@
       return "";
     }
 
+    function graphDegrees() {
+      const degree = new Map();
+      nodes.filter(isNodeGraphVisible).forEach((node) => degree.set(node.id, 0));
+      edges.filter(isEdgeGraphVisible).forEach((edge) => {
+        degree.set(edge.from, (degree.get(edge.from) || 0) + 1);
+        degree.set(edge.to, (degree.get(edge.to) || 0) + 1);
+      });
+      return degree;
+    }
+
+    function filterMatchesDegree(degree) {
+      if (filterState.degree === null) return true;
+      if (filterState.mode === "below") return degree <= filterState.degree;
+      if (filterState.mode === "above") return degree >= filterState.degree;
+      return degree === filterState.degree;
+    }
+
+    function activeFilterCount() {
+      return [filterState.degree !== null, filterState.range !== null, !!filterState.cluster].filter(Boolean).length;
+    }
+
+    function rangeSummaryFromSelected(maxSteps) {
+      const selectedNode = selectedType === "node" ? nodesById.get(selectedId) : null;
+      const nodeIds = new Set();
+      const distanceByNodeId = new Map();
+      if (!isNodeGraphVisible(selectedNode)) return { nodeIds, distanceByNodeId };
+      nodeIds.add(selectedNode.id);
+      distanceByNodeId.set(selectedNode.id, 0);
+      let frontier = [selectedNode.id];
+      for (let step = 0; step < maxSteps; step += 1) {
+        const next = [];
+        edges.filter(isEdgeGraphVisible).forEach((edge) => {
+          frontier.forEach((nodeId) => {
+            let neighborId = "";
+            if (edge.from === nodeId) neighborId = edge.to;
+            else if (edge.to === nodeId) neighborId = edge.from;
+            if (!neighborId || nodeIds.has(neighborId) || !isNodeGraphVisible(nodesById.get(neighborId))) return;
+            nodeIds.add(neighborId);
+            distanceByNodeId.set(neighborId, step + 1);
+            next.push(neighborId);
+          });
+        });
+        frontier = next;
+        if (!frontier.length) break;
+      }
+      return { nodeIds, distanceByNodeId };
+    }
+
+    function normalizedClusterSet(value) {
+      return splitLoose(value).map((cluster) => cluster.toLowerCase());
+    }
+
+    function rowHasCluster(row, cluster) {
+      return normalizedClusterSet(row?.clusters).includes(cluster);
+    }
+
+    function knownClusters() {
+      const values = new Map();
+      [...nodes, ...edges].forEach((row) => {
+        splitLoose(row.clusters).forEach((cluster) => {
+          const key = cluster.toLowerCase();
+          if (!values.has(key)) values.set(key, cluster);
+        });
+      });
+      return [...values.values()].sort((a, b) => a.localeCompare(b));
+    }
+
+    function refreshClusterFilterOptions() {
+      const list = document.getElementById("clusterFilterOptions");
+      if (!list) return;
+      list.innerHTML = knownClusters().map((cluster) => `<option value="${escapeHtml(cluster)}"></option>`).join("");
+    }
+
+    function currentFilterMatches() {
+      const degree = graphDegrees();
+      const rangeSummary = filterState.range === null ? null : rangeSummaryFromSelected(filterState.range);
+      const rangeNodeIds = rangeSummary?.nodeIds || null;
+      const cluster = filterState.cluster;
+      const nodeIds = new Set();
+      nodes.filter(isNodeGraphVisible).forEach((node) => {
+        if (!filterMatchesDegree(degree.get(node.id) || 0)) return;
+        if (rangeNodeIds && !rangeNodeIds.has(node.id)) return;
+        if (cluster && !rowHasCluster(node, cluster)) return;
+        nodeIds.add(node.id);
+      });
+      const edgeIds = new Set();
+      edges.filter(isEdgeGraphVisible).forEach((edge) => {
+        const sourceClusterMatch = cluster && rowHasCluster(nodesById.get(edge.from), cluster);
+        const targetClusterMatch = cluster && rowHasCluster(nodesById.get(edge.to), cluster);
+        const edgeClusterMatch = cluster && (rowHasCluster(edge, cluster) || (sourceClusterMatch && targetClusterMatch));
+        if (nodeIds.has(edge.from) || nodeIds.has(edge.to) || edgeClusterMatch) edgeIds.add(edge.id);
+      });
+      return { degree, nodeIds, edgeIds, rangeNodeIds, rangeDistanceByNodeId: rangeSummary?.distanceByNodeId || new Map() };
+    }
+
+    function activeFilterSummary() {
+      return activeFilterCount() ? currentFilterMatches() : null;
+    }
+
+    function validateWholeNumberText(text) {
+      const value = String(text || "").trim();
+      if (!value) return { active: false, degree: null, message: "" };
+      if (!/^\d+$/.test(value)) return { active: false, degree: null, message: "Enter a whole number." };
+      return { active: true, degree: Number(value), message: "" };
+    }
+
+    function validateDegreeText(text) {
+      return validateWholeNumberText(text);
+    }
+
+    function validateRangeText(text) {
+      const validation = validateWholeNumberText(text);
+      return { active: validation.active, range: validation.degree, message: validation.message };
+    }
+
+    function applyDegreeFilterFromInput() {
+      const input = document.getElementById("degreeFilterInput");
+      const mode = document.getElementById("degreeFilterMode");
+      const validation = validateDegreeText(input.value);
+      filterState.degreeText = input.value.trim();
+      filterState.mode = mode.value || "exactly";
+      filterState.message = validation.message;
+      if (validation.active) filterState.degree = validation.degree;
+      else filterState.degree = null;
+      renderFilterResults();
+      needsDraw = true;
+    }
+
+    function applyRangeFilterFromInput() {
+      const input = document.getElementById("rangeFilterInput");
+      const validation = validateRangeText(input.value);
+      filterState.rangeText = input.value.trim();
+      filterState.message = validation.message;
+      if (validation.active) filterState.range = validation.range;
+      else filterState.range = null;
+      renderFilterResults();
+      needsDraw = true;
+    }
+
+    function applyClusterFilterFromInput() {
+      const input = document.getElementById("clusterFilterInput");
+      filterState.clusterText = input.value.trim();
+      filterState.cluster = filterState.clusterText.toLowerCase();
+      renderFilterResults();
+      needsDraw = true;
+    }
+
+    function clearFilters() {
+      filterState.degreeText = "";
+      filterState.degree = null;
+      filterState.mode = "exactly";
+      filterState.rangeText = "";
+      filterState.range = null;
+      filterState.clusterText = "";
+      filterState.cluster = "";
+      filterState.message = "";
+      document.getElementById("degreeFilterInput").value = "";
+      document.getElementById("degreeFilterMode").value = "exactly";
+      document.getElementById("rangeFilterInput").value = "";
+      document.getElementById("clusterFilterInput").value = "";
+      renderFilterResults();
+      needsDraw = true;
+    }
+
+    function filterDescription(summary) {
+      const parts = [];
+      if (filterState.degree !== null) {
+        const mode = filterState.mode === "below" ? "and below" : filterState.mode === "above" ? "and above" : "exactly";
+        parts.push(`Degree: ${mode} ${filterState.degree}`);
+      }
+      if (filterState.range !== null) {
+        const selectedNode = selectedType === "node" ? nodesById.get(selectedId) : null;
+        if (isNodeGraphVisible(selectedNode)) parts.push(`From selected: ${nodeLabel(selectedNode)}, within ${filterState.range}`);
+        else parts.push("From selected: select a word");
+      }
+      if (filterState.cluster) parts.push(`Cluster: ${filterState.clusterText}`);
+      if (!parts.length) return "";
+      return parts.join(" | ");
+    }
+
+    function renderFilterResults() {
+      refreshClusterFilterOptions();
+      const status = document.getElementById("filterStatus");
+      const results = document.getElementById("filterResults");
+      if (!status || !results) return;
+      let statusMessage = filterState.message;
+      if (!statusMessage && filterState.range !== null && !isNodeGraphVisible(selectedType === "node" ? nodesById.get(selectedId) : null)) {
+        statusMessage = "Select a word to use From selected.";
+      }
+      status.textContent = statusMessage;
+      if (!activeFilterCount()) {
+        results.innerHTML = `<div class="issue">${escapeHtml(filterState.message || "Enter a degree, range, or cluster to filter words.")}</div>`;
+        return;
+      }
+      const summary = currentFilterMatches();
+      const matches = nodes
+        .filter((node) => summary.nodeIds.has(node.id))
+        .sort((a, b) => (summary.degree.get(a.id) || 0) - (summary.degree.get(b.id) || 0) || nodeLabel(a).localeCompare(nodeLabel(b)));
+      results.innerHTML = [
+        `<div class="filter-result-count">${escapeHtml(filterDescription(summary))}<br>${matches.length} matching ${matches.length === 1 ? "word" : "words"}</div>`,
+        ...matches.map((node) => {
+          const clusters = compactListValue(node.clusters);
+          const distance = summary.rangeDistanceByNodeId.get(node.id);
+          const distanceText = filterState.range !== null && Number.isFinite(distance) ? `Dist. ${distance}` : "";
+          const detail = compactMetadata([`Deg. ${summary.degree.get(node.id) || 0}`, distanceText, clusters]);
+          return `<button class="filter-result" type="button" data-node-id="${escapeHtml(node.id)}">${escapeHtml(node.word_id || node.id)}<small>${escapeHtml(detail)}</small></button>`;
+        }),
+      ].join("");
+    }
+
     function loadChanges() {
       try {
         const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -428,6 +726,8 @@
           domainAdditions: Array.isArray(parsed.domainAdditions) ? parsed.domainAdditions : [],
           qcEntries: Array.isArray(parsed.qcEntries) ? parsed.qcEntries : [],
           globalOverridesText: parsed.globalOverridesText || "",
+          layoutPositions: parsed.layoutPositions && typeof parsed.layoutPositions === "object" ? parsed.layoutPositions : {},
+          edgeComfortOverrides: parsed.edgeComfortOverrides && typeof parsed.edgeComfortOverrides === "object" ? parsed.edgeComfortOverrides : {},
           edits: {
             words: parsed.edits?.words && typeof parsed.edits.words === "object" ? parsed.edits.words : {},
             connections: parsed.edits?.connections && typeof parsed.edits.connections === "object" ? parsed.edits.connections : {},
@@ -436,7 +736,7 @@
           lastSaved: parsed.lastSaved || "",
         };
       } catch (_error) {
-        return { additions: [], domainAdditions: [], qcEntries: [], globalOverridesText: "", edits: { words: {}, connections: {} }, domainEdits: {}, lastSaved: "" };
+        return { additions: [], domainAdditions: [], qcEntries: [], globalOverridesText: "", layoutPositions: {}, edgeComfortOverrides: {}, edits: { words: {}, connections: {} }, domainEdits: {}, lastSaved: "" };
       }
     }
 
@@ -450,7 +750,9 @@
       document.querySelectorAll(".tab").forEach((button) => button.classList.toggle("active", button.dataset.tab === name));
       document.getElementById("inspectPanel").hidden = name !== "inspect";
       document.getElementById("qcPanel").hidden = name !== "qc";
+      document.getElementById("filterPanel").hidden = name !== "filter";
       document.getElementById("otherPanel").hidden = name !== "other";
+      if (name === "filter") renderFilterResults();
     }
 
     function applyLayoutMode(mode) {
@@ -1114,6 +1416,10 @@
       const canRename = nextId && nextId !== previousId && (!nodesById.has(nextId) || nodesById.get(nextId) === node);
       if (canRename) {
         nodesById.delete(previousId);
+        if (changes.layoutPositions?.[previousId]) {
+          changes.layoutPositions[nextId] = changes.layoutPositions[previousId];
+          delete changes.layoutPositions[previousId];
+        }
         edges.forEach((edge) => {
           if (edge.from === previousId) edge.from = edge.source_word_id = nextId;
           if (edge.to === previousId) edge.to = edge.target_word_id = nextId;
@@ -1123,6 +1429,7 @@
           if (connectionEdit.editedRow?.target_word_id === previousId) connectionEdit.editedRow.target_word_id = nextId;
         });
         node.id = nextId;
+        if (pinnedNodeId === previousId) pinnedNodeId = nextId;
       }
 
       Object.assign(node, wordRowToNodePatch(row));
@@ -1132,6 +1439,7 @@
       }
       nodesById.set(node.id, node);
       if (selectedType === "node" && selectedId === previousId && canRename) selectedId = node.id;
+      if (pinnedNodeId === node.id && !isNodeGraphVisible(node)) releasePinnedNode({ persist: false });
       if (!options.restore && nextId !== previousId && !canRename) {
         updateStatus("Saved edit. Word ID collides with an existing node, so the graph kept its old internal ID.");
       }
@@ -1149,6 +1457,10 @@
       const nextId = row.edge_id || previousId;
       if (nextId !== previousId && (!edgesById.has(nextId) || edgesById.get(nextId) === edge)) {
         edgesById.delete(previousId);
+        if (changes.edgeComfortOverrides?.[previousId]) {
+          changes.edgeComfortOverrides[nextId] = changes.edgeComfortOverrides[previousId];
+          delete changes.edgeComfortOverrides[previousId];
+        }
         edge.id = nextId;
         if (selectedType === "edge" && selectedId === previousId) selectedId = nextId;
       }
@@ -1162,6 +1474,7 @@
     }
 
     function seedLayout() {
+      const hasStoredLayoutPositions = Object.keys(changes.layoutPositions || {}).length > 0;
       const radius = Math.max(360, nodes.length * 3.2);
       nodes.forEach((node, index) => {
         const angle = index * 2.399963229728653;
@@ -1171,48 +1484,237 @@
       });
       changes.additions.forEach(applyAddition);
       applyStoredEdits();
-      for (let i = 0; i < 120; i += 1) tickLayout();
+      startInitWarmStart(!hasStoredLayoutPositions);
+      for (let i = 0; i < INITIAL_SYNC_LAYOUT_TICKS; i += 1) tickLayout();
+      applyStoredLayoutPositions();
       fitGraph();
     }
 
+    function startInitWarmStart(active) {
+      hubScaffoldTicksRemaining = active ? HUB_SCAFFOLD_TICKS : 0;
+      hubScaffoldAnchors = active ? buildHubScaffoldAnchors() : new Map();
+      initClusterTicksRemaining = active ? INIT_EDGE_CLUSTER_TICKS : 0;
+      initRepulsionSettleTicksRemaining = active ? INIT_REPULSION_SETTLE_TICKS : 0;
+      fitAfterInitWarmStart = !!active;
+    }
+
+    function buildHubScaffoldAnchors() {
+      const visibleNodes = nodes.filter(isNodeGraphVisible);
+      if (!visibleNodes.length) return new Map();
+      const degree = graphDegrees();
+      const hubs = visibleNodes
+        .slice()
+        .sort((a, b) => (degree.get(b.id) || 0) - (degree.get(a.id) || 0) || a.id.localeCompare(b.id))
+        .slice(0, HUB_SCAFFOLD_COUNT);
+      const anchors = new Map();
+      const radiusX = Math.max(HUB_SCAFFOLD_RADIUS_MIN, Math.min(HUB_SCAFFOLD_RADIUS_MAX, Math.sqrt(visibleNodes.length) * HUB_SCAFFOLD_RADIUS_PER_ROOT_NODE));
+      const radiusY = radiusX * 0.72;
+      hubs.forEach((node, index) => {
+        const angle = (-Math.PI / 2) + (index / Math.max(1, hubs.length)) * Math.PI * 2;
+        const anchor = { x: Math.cos(angle) * radiusX, y: Math.sin(angle) * radiusY };
+        anchors.set(node.id, anchor);
+        node.x = anchor.x;
+        node.y = anchor.y;
+        node.vx = 0;
+        node.vy = 0;
+      });
+      seedHubDirectNeighbors(hubs, anchors, degree);
+      return anchors;
+    }
+
+    function seedHubDirectNeighbors(hubs, anchors, degree) {
+      const hubIds = new Set(hubs.map((node) => node.id));
+      const assigned = new Set(hubIds);
+      hubs.forEach((hub, hubIndex) => {
+        const anchor = anchors.get(hub.id);
+        if (!anchor) return;
+        const neighbors = [];
+        const seenNeighbors = new Set();
+        edges.filter(isEdgeGraphVisible).forEach((edge) => {
+          let neighborId = "";
+          if (edge.from === hub.id) neighborId = edge.to;
+          else if (edge.to === hub.id) neighborId = edge.from;
+          if (!neighborId || assigned.has(neighborId) || hubIds.has(neighborId) || seenNeighbors.has(neighborId)) return;
+          const neighbor = nodesById.get(neighborId);
+          if (isNodeGraphVisible(neighbor)) {
+            seenNeighbors.add(neighborId);
+            neighbors.push(neighbor);
+          }
+        });
+        neighbors
+          .sort((a, b) => ((degree.get(b.id) || 0) - (degree.get(a.id) || 0)) || a.id.localeCompare(b.id))
+          .forEach((neighbor, neighborIndex) => {
+            const angle = (-Math.PI / 2) + (hubIndex / Math.max(1, hubs.length)) * Math.PI * 2 + (neighborIndex - (neighbors.length - 1) / 2) * 0.42;
+            const radius = HUB_NEIGHBOR_SEED_RADIUS + Math.min(90, neighborIndex * 10);
+            neighbor.x = anchor.x + Math.cos(angle) * radius;
+            neighbor.y = anchor.y + Math.sin(angle) * radius;
+            neighbor.vx = 0;
+            neighbor.vy = 0;
+            assigned.add(neighbor.id);
+          });
+      });
+    }
+
+    function reseedCurrentLayout(warmStart = false) {
+      layoutPaused = false;
+      const radius = Math.max(360, nodes.length * 3.2);
+      nodes.forEach((node, index) => {
+        const angle = index * 2.399963229728653;
+        const ring = radius * Math.sqrt((index + 1) / nodes.length);
+        node.x = Math.cos(angle) * ring;
+        node.y = Math.sin(angle) * ring;
+        node.vx = 0;
+        node.vy = 0;
+      });
+      startInitWarmStart(warmStart);
+      fitGraph();
+    }
+
+    function reinitializeLayout() {
+      if (!confirm("Reinitialize local graph layout? Mobile data changes will be kept.")) return;
+      if (pinnedNodeId) releasePinnedNode({ persist: false });
+      changes.layoutPositions = {};
+      changes.edgeComfortOverrides = {};
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(changes));
+      reseedCurrentLayout(true);
+      updatePinButton();
+      updateStatus("Reinitialized local graph layout.");
+    }
+
+    function reseedLayoutCoordinatesOnly(resumeLayout = true) {
+      const radius = Math.max(360, nodes.length * 3.2);
+      nodes.forEach((node, index) => {
+        const angle = index * 2.399963229728653;
+        const ring = radius * Math.sqrt((index + 1) / nodes.length);
+        node.x = Math.cos(angle) * ring;
+        node.y = Math.sin(angle) * ring;
+        node.vx = 0;
+        node.vy = 0;
+      });
+      layoutPaused = !resumeLayout;
+      startInitWarmStart(!!resumeLayout);
+      needsDraw = true;
+    }
+
+    function clampVector(x, y, maxLength) {
+      const length = Math.hypot(x, y);
+      if (!Number.isFinite(length) || length <= maxLength) return { x, y };
+      const scale = maxLength / length;
+      return { x: x * scale, y: y * scale };
+    }
+
+    function sanitizeLayoutState() {
+      let badCount = 0;
+      nodes.forEach((node) => {
+        const badPosition = !Number.isFinite(node.x) || !Number.isFinite(node.y) || Math.abs(node.x) > MAX_GRAPH_COORD || Math.abs(node.y) > MAX_GRAPH_COORD;
+        const badVelocity = !Number.isFinite(node.vx) || !Number.isFinite(node.vy) || Math.abs(node.vx) > MAX_GRAPH_COORD || Math.abs(node.vy) > MAX_GRAPH_COORD;
+        if (badPosition || badVelocity) badCount += 1;
+        if (badVelocity) {
+          node.vx = 0;
+          node.vy = 0;
+        }
+      });
+      if (badCount > MAX_BAD_LAYOUT_NODES) {
+        console.warn("Wordlinks mobile layout reseeded after instability:", badCount);
+        reseedLayoutCoordinatesOnly();
+        return false;
+      }
+      if (badCount) {
+        const radius = Math.max(360, nodes.length * 3.2);
+        nodes.forEach((node, index) => {
+          if (Number.isFinite(node.x) && Number.isFinite(node.y) && Math.abs(node.x) <= MAX_GRAPH_COORD && Math.abs(node.y) <= MAX_GRAPH_COORD) return;
+          const angle = index * 2.399963229728653;
+          const ring = radius * Math.sqrt((index + 1) / nodes.length);
+          node.x = Math.cos(angle) * ring;
+          node.y = Math.sin(angle) * ring;
+          node.vx = 0;
+          node.vy = 0;
+        });
+      }
+      return true;
+    }
+
+    function edgeComfortLength(edge) {
+      const override = Number(changes.edgeComfortOverrides?.[edge?.id]);
+      if (override === Infinity) return Infinity;
+      if (!Number.isFinite(override) || override <= 0) return MAX_COMFORTABLE_EDGE_LENGTH;
+      return Math.max(MAX_COMFORTABLE_EDGE_LENGTH, Math.min(EDGE_COMFORT_MAX, override));
+    }
+
     function tickLayout() {
+      if (layoutPaused) return;
+      if (!sanitizeLayoutState()) return;
       const visibleNodes = nodes.filter(isNodeGraphVisible);
       const visibleEdges = edges.filter(isEdgeGraphVisible);
-      const degree = new Map(visibleNodes.map((node) => [node.id, 0]));
-      visibleEdges.forEach((edge) => {
-        degree.set(edge.from, (degree.get(edge.from) || 0) + 1);
-        degree.set(edge.to, (degree.get(edge.to) || 0) + 1);
-      });
       for (let i = 0; i < visibleNodes.length; i += 1) {
         for (let j = i + 1; j < visibleNodes.length; j += 1) {
           const a = visibleNodes[i], b = visibleNodes[j];
           let dx = b.x - a.x, dy = b.y - a.y;
           let distance = Math.hypot(dx, dy) || 1;
-          const force = Math.min(80, 1800 / (distance * distance));
+          if (distance >= NODE_REPULSION_RADIUS) continue;
+          const force = (NODE_REPULSION_RADIUS - distance) * NODE_REPULSION_FORCE;
           dx /= distance; dy /= distance;
           a.vx -= dx * force; a.vy -= dy * force;
           b.vx += dx * force; b.vy += dy * force;
         }
       }
-      visibleEdges.forEach((edge) => {
-        const a = nodesById.get(edge.from), b = nodesById.get(edge.to);
-        if (!a || !b) return;
-        const desired = 78 + Math.min(80, ((degree.get(a.id) || 0) + (degree.get(b.id) || 0)) * 2);
-        let dx = b.x - a.x, dy = b.y - a.y;
-        const distance = Math.hypot(dx, dy) || 1;
-        const force = (distance - desired) * 0.012;
-        dx /= distance; dy /= distance;
-        a.vx += dx * force; a.vy += dy * force;
-        b.vx -= dx * force; b.vy -= dy * force;
-      });
+      const hubScaffoldActive = hubScaffoldTicksRemaining > 0;
+      const hubAnchorsActive = hubScaffoldAnchors.size > 0;
+      const initClusteringActive = hubScaffoldActive || initClusterTicksRemaining > 0;
+      const edgeForcesActive = EDGE_LAYOUT_FORCES_ENABLED || initClusteringActive;
+      if (edgeForcesActive) {
+        visibleEdges.forEach((edge) => {
+          const a = nodesById.get(edge.from), b = nodesById.get(edge.to);
+          if (!a || !b) return;
+          let dx = b.x - a.x, dy = b.y - a.y;
+          const distance = Math.hypot(dx, dy) || 1;
+          const hubEdge = initClusteringActive && hubAnchorsActive && (hubScaffoldAnchors.has(edge.from) || hubScaffoldAnchors.has(edge.to));
+          const targetLength = hubEdge ? HUB_EDGE_TARGET_LENGTH : initClusteringActive ? INIT_EDGE_TARGET_LENGTH : edgeComfortLength(edge);
+          if (distance <= targetLength) return;
+          const pull = hubEdge ? HUB_EDGE_PULL : initClusteringActive ? INIT_EDGE_PULL : LONG_EDGE_PULL;
+          const force = (distance - targetLength) * pull;
+          dx /= distance; dy /= distance;
+          a.vx += dx * force; a.vy += dy * force;
+          b.vx -= dx * force; b.vy -= dy * force;
+        });
+      }
       visibleNodes.forEach((node) => {
-        node.vx += -node.x * 0.0008;
-        node.vy += -node.y * 0.0008;
-        node.vx *= 0.82;
-        node.vy *= 0.82;
-        node.x += node.vx;
-        node.y += node.vy;
+        if (hubAnchorsActive && hubScaffoldAnchors.has(node.id)) {
+          const anchor = hubScaffoldAnchors.get(node.id);
+          node.x = anchor.x;
+          node.y = anchor.y;
+          node.vx = 0;
+          node.vy = 0;
+          return;
+        }
+        if (pinnedNodeIds.has(node.id)) {
+          node.vx = 0;
+          node.vy = 0;
+          return;
+        }
+        node.vx += -node.x * CENTERING_FORCE;
+        node.vy += -node.y * CENTERING_FORCE;
+        node.vx *= LAYOUT_DAMPING;
+        node.vy *= LAYOUT_DAMPING;
+        const velocity = clampVector(node.vx, node.vy, MAX_NODE_VELOCITY);
+        node.vx = velocity.x;
+        node.vy = velocity.y;
+        const displacement = clampVector(node.vx, node.vy, MAX_NODE_DISPLACEMENT);
+        node.x += displacement.x;
+        node.y += displacement.y;
       });
+      if (hubScaffoldTicksRemaining > 0) {
+        hubScaffoldTicksRemaining -= 1;
+      } else if (initClusterTicksRemaining > 0) {
+        initClusterTicksRemaining -= 1;
+      } else if (initRepulsionSettleTicksRemaining > 0) {
+        initRepulsionSettleTicksRemaining -= 1;
+      }
+      if (!hubScaffoldTicksRemaining && !initClusterTicksRemaining && !initRepulsionSettleTicksRemaining && fitAfterInitWarmStart) {
+        fitAfterInitWarmStart = false;
+        hubScaffoldAnchors = new Map();
+        fitGraph();
+      }
       needsDraw = true;
     }
 
@@ -1272,7 +1774,177 @@
       return { x: Number(position.x), y: Number(position.y) };
     }
 
+    function storedLayoutPosition(nodeId) {
+      return normalizedPosition(changes.layoutPositions?.[nodeId]);
+    }
+
+    function applyStoredLayoutPositions() {
+      Object.entries(changes.layoutPositions || {}).forEach(([nodeId, position]) => {
+        const node = nodesById.get(nodeId);
+        const stored = normalizedPosition(position);
+        if (!node || !stored) return;
+        node.x = stored.x;
+        node.y = stored.y;
+        node.vx = 0;
+        node.vy = 0;
+      });
+    }
+
+    function visibleNodeIdsWithinRadius(nodeId, radius) {
+      const root = nodesById.get(nodeId);
+      if (!isNodeGraphVisible(root)) return [];
+      const maxDepth = Math.max(0, Math.min(2, Number(radius) || 0));
+      const seen = new Set([nodeId]);
+      let frontier = [nodeId];
+      for (let depth = 0; depth < maxDepth; depth += 1) {
+        const next = [];
+        edges.filter(isEdgeGraphVisible).forEach((edge) => {
+          frontier.forEach((currentId) => {
+            let neighborId = "";
+            if (edge.from === currentId) neighborId = edge.to;
+            else if (edge.to === currentId) neighborId = edge.from;
+            if (!neighborId || seen.has(neighborId) || !isNodeGraphVisible(nodesById.get(neighborId))) return;
+            seen.add(neighborId);
+            next.push(neighborId);
+          });
+        });
+        frontier = next;
+        if (!frontier.length) break;
+      }
+      return [...seen];
+    }
+
+    function visibleDirectNeighborIds(nodeId) {
+      const ids = new Set();
+      edges.filter(isEdgeGraphVisible).forEach((edge) => {
+        if (edge.from === nodeId && edge.to !== nodeId) ids.add(edge.to);
+        else if (edge.to === nodeId && edge.from !== nodeId) ids.add(edge.from);
+      });
+      return [...ids].filter((id) => isNodeGraphVisible(nodesById.get(id)));
+    }
+
+    function tightenSelectedNeighbors() {
+      const anchor = selectedType === "node" ? nodesById.get(selectedId) : null;
+      if (!anchor || !isNodeGraphVisible(anchor)) return;
+      const neighbors = visibleDirectNeighborIds(anchor.id).map((id) => nodesById.get(id)).filter(Boolean);
+      if (!neighbors.length) return;
+      const distances = neighbors.map((node) => Math.hypot(node.x - anchor.x, node.y - anchor.y));
+      const maxDistance = Math.max(...distances);
+      const closeEnoughDistance = maxDistance * TIGHTEN_CLOSE_FRACTION;
+      neighbors.forEach((node, index) => {
+        if (distances[index] <= closeEnoughDistance) return;
+        node.x = anchor.x + (node.x - anchor.x) * TIGHTEN_MOVE_FACTOR;
+        node.y = anchor.y + (node.y - anchor.y) * TIGHTEN_MOVE_FACTOR;
+        node.vx = 0;
+        node.vy = 0;
+      });
+      needsDraw = true;
+    }
+
+    function updatePinButton() {
+      const button = document.getElementById("pinButton");
+      const radiusSelect = document.getElementById("pinRadiusSelect");
+      const tightenButton = document.getElementById("tightenButton");
+      if (!button) return;
+      const selectedNode = selectedType === "node" ? nodesById.get(selectedId) : null;
+      const canPin = !!selectedNode && isNodeGraphVisible(selectedNode);
+      const isActive = !!pinnedNodeId;
+      button.disabled = !isActive && !canPin;
+      button.textContent = isActive ? "Release" : "Pin";
+      button.classList.toggle("pin-active", isActive);
+      if (radiusSelect) radiusSelect.disabled = isActive;
+      if (tightenButton) tightenButton.disabled = isActive || !canPin;
+    }
+
+    function maintainPinnedNodeAnchor() {
+      if (!pinnedNodeId) return;
+      if (selectedType !== "node" || selectedId !== pinnedNodeId || !pinnedScreenAnchors.size) {
+        releasePinnedNode({ persist: false });
+        return;
+      }
+      for (const nodeId of [...pinnedNodeIds]) {
+        const node = nodesById.get(nodeId);
+        const anchor = pinnedScreenAnchors.get(nodeId);
+        if (!node || !anchor || !isNodeGraphVisible(node)) {
+          pinnedNodeIds.delete(nodeId);
+          pinnedScreenAnchors.delete(nodeId);
+          continue;
+        }
+        node.x = (anchor.x - transform.x) / transform.scale;
+        node.y = (anchor.y - transform.y) / transform.scale;
+        node.vx = 0;
+        node.vy = 0;
+      }
+      if (!pinnedNodeIds.has(pinnedNodeId)) releasePinnedNode({ persist: false });
+      needsDraw = true;
+    }
+
+    function togglePinNode() {
+      if (pinnedNodeId) {
+        releasePinnedNode();
+        return;
+      }
+      const node = selectedType === "node" ? nodesById.get(selectedId) : null;
+      if (!node || !isNodeGraphVisible(node)) return;
+      const radius = Number(document.getElementById("pinRadiusSelect")?.value || 0);
+      pinnedNodeIds = new Set(visibleNodeIdsWithinRadius(node.id, radius));
+      pinnedScreenAnchors = new Map();
+      pinnedNodeIds.forEach((nodeId) => {
+        const pinnedNode = nodesById.get(nodeId);
+        if (pinnedNode) pinnedScreenAnchors.set(nodeId, worldToScreen(pinnedNode));
+      });
+      pinnedNodeId = node.id;
+      updatePinButton();
+      needsDraw = true;
+    }
+
+    function releasePinnedNode(options = {}) {
+      if (!pinnedNodeId) return;
+      const persist = options.persist !== false;
+      maintainPinnedNodeAnchorBeforeRelease();
+      if (persist) persistBoundaryEdgeComfortOverrides();
+      pinnedNodeId = "";
+      pinnedNodeIds = new Set();
+      pinnedScreenAnchors = new Map();
+      updatePinButton();
+      needsDraw = true;
+    }
+
+    function maintainPinnedNodeAnchorBeforeRelease() {
+      if (!pinnedNodeId || !pinnedScreenAnchors.size) return;
+      pinnedScreenAnchors.forEach((anchor, nodeId) => {
+        const node = nodesById.get(nodeId);
+        if (!node) return;
+        node.x = (anchor.x - transform.x) / transform.scale;
+        node.y = (anchor.y - transform.y) / transform.scale;
+        node.vx = 0;
+        node.vy = 0;
+      });
+    }
+
+    function persistBoundaryEdgeComfortOverrides() {
+      if (!pinnedNodeIds.size) return;
+      changes.edgeComfortOverrides = changes.edgeComfortOverrides || {};
+      let relaxedCount = 0;
+      edges.filter(isEdgeGraphVisible).forEach((edge) => {
+        const sourcePinned = pinnedNodeIds.has(edge.from);
+        const targetPinned = pinnedNodeIds.has(edge.to);
+        if (sourcePinned === targetPinned) return;
+        const source = nodesById.get(edge.from);
+        const target = nodesById.get(edge.to);
+        if (!source || !target) return;
+        const currentLength = Math.hypot(target.x - source.x, target.y - source.y);
+        if (!Number.isFinite(currentLength)) return;
+        changes.edgeComfortOverrides[edge.id] = "Infinity";
+        relaxedCount += 1;
+      });
+      console.info("Wordlinks mobile pin release relaxed boundary edges:", relaxedCount, "total relaxed:", Object.keys(changes.edgeComfortOverrides).length, "centering:", CENTERING_FORCE);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(changes));
+    }
+
     function positionForAddition(addition) {
+      const layoutPosition = storedLayoutPosition(addition?.wordRow?.word_id);
+      if (layoutPosition) return layoutPosition;
       const stored = normalizedPosition(addition.position);
       if (stored) return stored;
       const wordId = addition.wordRow?.word_id;
@@ -1361,6 +2033,39 @@
       return `${clipped}...`;
     }
 
+    function drawForwardArrowhead(edge, sourceNode, targetNode) {
+      if (edge.direction !== "forward") return;
+      const dx = targetNode.x - sourceNode.x;
+      const dy = targetNode.y - sourceNode.y;
+      const length = Math.hypot(dx, dy);
+      if (length < 1) return;
+      const ux = dx / length;
+      const uy = dy / length;
+      const box = fallbackNodeBox(targetNode);
+      const halfWidth = Math.max(1, box.width / 2);
+      const halfHeight = Math.max(1, box.height / 2);
+      const xLimit = Math.abs(ux) > 0.001 ? halfWidth / Math.abs(ux) : Infinity;
+      const yLimit = Math.abs(uy) > 0.001 ? halfHeight / Math.abs(uy) : Infinity;
+      const boundaryDistance = Math.min(xLimit, yLimit);
+      const gap = 4 / transform.scale;
+      const size = 10 / transform.scale;
+      const width = 6 / transform.scale;
+      if (length <= boundaryDistance + size + gap) return;
+      const tipX = targetNode.x - ux * (boundaryDistance + gap);
+      const tipY = targetNode.y - uy * (boundaryDistance + gap);
+      const baseX = tipX - ux * size;
+      const baseY = tipY - uy * size;
+      const px = -uy;
+      const py = ux;
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.beginPath();
+      ctx.moveTo(tipX, tipY);
+      ctx.lineTo(baseX + px * width, baseY + py * width);
+      ctx.lineTo(baseX - px * width, baseY - py * width);
+      ctx.closePath();
+      ctx.fill();
+    }
+
     function draw() {
       const metrics = resizeGraphCanvasToDisplaySize();
       if (!needsDraw) return;
@@ -1372,34 +2077,67 @@
       ctx.scale(transform.scale, transform.scale);
       ctx.lineWidth = 1.2 / transform.scale;
       const highlights = selectedGraphHighlights();
+      const filterSummary = activeFilterSummary();
+      const filterActive = !!filterSummary;
+      const filterCount = filterActive ? activeFilterCount() : 0;
+      const rangeActive = filterActive && filterState.range !== null;
+      const rangeOnlyFilter = rangeActive && filterCount === 1;
+      const rangeDistanceByNodeId = filterSummary?.rangeDistanceByNodeId || new Map();
+      const pinActive = !!pinnedNodeId;
       edges.filter(isEdgeGraphVisible).forEach((edge) => {
         const a = nodesById.get(edge.from), b = nodesById.get(edge.to);
         if (!a || !b) return;
         const selected = selectedType === "edge" && edge.id === selectedId;
-        const incident = highlights.edgeIds.has(edge.id);
-        ctx.strokeStyle = selected ? cssVar("--edge-selected") : incident ? cssVar("--edge-highlight") : edge.mobile ? "rgba(79,156,240,.76)" : cssVar("--edge");
-        ctx.lineWidth = (selected ? 3.6 : incident ? 2.8 : edge.mobile ? 2 : 1.2) / transform.scale;
+        const incident = !pinActive && !filterActive && highlights.edgeIds.has(edge.id);
+        const pinnedEdge = pinActive && pinnedNodeIds.has(edge.from) && pinnedNodeIds.has(edge.to);
+        const filterContext = filterActive && filterSummary.edgeIds.has(edge.id);
+        const sourceRangeDistance = rangeDistanceByNodeId.get(edge.from);
+        const targetRangeDistance = rangeDistanceByNodeId.get(edge.to);
+        const rangeContext = rangeActive &&
+          Number.isFinite(sourceRangeDistance) &&
+          Number.isFinite(targetRangeDistance) &&
+          sourceRangeDistance <= filterState.range &&
+          targetRangeDistance <= filterState.range &&
+          Math.abs(sourceRangeDistance - targetRangeDistance) <= 1;
+        const selectedEdgeEmphasis = selected && (!filterActive || filterContext);
+        const filterDimmed = filterActive && !filterContext && !rangeContext && !pinnedEdge;
+        const mutedRangeContext = rangeContext && !filterContext && !rangeOnlyFilter;
+        ctx.globalAlpha = selectedEdgeEmphasis || incident || pinnedEdge ? 1 : filterDimmed ? 0.18 : mutedRangeContext ? 0.32 : rangeContext && !filterContext ? 0.46 : filterActive ? 0.62 : 1;
+        ctx.strokeStyle = pinnedEdge ? PIN_EDGE_COLOR : selectedEdgeEmphasis ? cssVar("--edge-selected") : incident ? cssVar("--edge-highlight") : mutedRangeContext ? RANGE_CONTEXT_EDGE_COLOR : rangeContext ? cssVar("--edge-highlight") : edge.mobile ? "rgba(79,156,240,.76)" : cssVar("--edge");
+        ctx.lineWidth = (pinnedEdge ? 3.2 : selectedEdgeEmphasis ? 3.6 : incident ? 2.8 : mutedRangeContext ? 1.8 : rangeContext ? 2.2 : edge.mobile ? 2 : 1.2) / transform.scale;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
         ctx.stroke();
+        drawForwardArrowhead(edge, a, b);
+        ctx.globalAlpha = 1;
       });
       nodes.filter(isNodeGraphVisible).forEach((node) => {
         const selected = selectedType === "node" && node.id === selectedId;
-        const endpoint = selectedType === "edge" && highlights.nodeIds.has(node.id);
-        const neighbor = highlights.neighborIds.has(node.id);
+        const pinnedNode = pinActive && pinnedNodeIds.has(node.id);
+        const endpoint = !pinActive && !filterActive && selectedType === "edge" && highlights.nodeIds.has(node.id);
+        const neighbor = !pinActive && !filterActive && highlights.neighborIds.has(node.id);
+        const filterMatch = filterActive && filterSummary.nodeIds.has(node.id);
+        const filterDimmed = filterActive && !filterMatch && !pinnedNode;
+        const rangeDistance = rangeDistanceByNodeId.get(node.id);
+        const rangeContext = rangeActive && Number.isFinite(rangeDistance) && rangeDistance <= filterState.range;
+        const selectedFilterReference = filterDimmed && selected;
+        const mutedRangeContext = filterDimmed && rangeContext && !rangeOnlyFilter && !selectedFilterReference;
         const box = measureNodeBox(node);
-        ctx.fillStyle = selected || endpoint ? cssVar("--edge-selected") : neighbor ? cssVar("--neighbor") : node.mobile ? cssVar("--review") : cssVar("--node");
-        ctx.strokeStyle = selected || endpoint ? cssVar("--accent") : "rgba(238,245,242,.55)";
-        ctx.lineWidth = selected || endpoint ? 2.8 / transform.scale : neighbor ? 1.8 / transform.scale : 1 / transform.scale;
+        ctx.globalAlpha = selectedFilterReference ? 0.56 : mutedRangeContext ? 0.32 : filterDimmed && rangeContext ? 0.46 : filterDimmed ? 0.24 : 1;
+        const selectedFill = selected && (!filterActive || filterMatch);
+        ctx.fillStyle = pinnedNode ? PIN_NODE_FILL : selectedFill || endpoint ? cssVar("--edge-selected") : neighbor ? cssVar("--neighbor") : mutedRangeContext ? RANGE_CONTEXT_NODE_FILL : rangeContext ? cssVar("--neighbor") : node.mobile ? cssVar("--review") : cssVar("--node");
+        ctx.strokeStyle = pinnedNode ? PIN_NODE_STROKE : selected ? cssVar("--accent") : endpoint ? cssVar("--accent") : "rgba(238,245,242,.55)";
+        ctx.lineWidth = pinnedNode ? 3 / transform.scale : selected || endpoint ? 2.8 / transform.scale : mutedRangeContext ? 1.4 / transform.scale : neighbor || rangeContext ? 1.8 / transform.scale : 1 / transform.scale;
         roundedRect(ctx, box.x, box.y, box.width, box.height, 12);
         ctx.fill();
         ctx.stroke();
-        ctx.fillStyle = node.mobile && !selected && !endpoint && !neighbor ? "#ffffff" : "#101715";
+        ctx.fillStyle = pinnedNode || (node.mobile && !selected && !endpoint && !neighbor) ? "#ffffff" : "#101715";
         ctx.font = "13px system-ui, sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(fitTextToWidth(nodeLabel(node), box.width - 14), node.x, node.y + 0.5);
+        ctx.globalAlpha = 1;
       });
       ctx.textAlign = "start";
       ctx.textBaseline = "alphabetic";
@@ -1407,18 +2145,30 @@
     }
 
     function animationLoop() {
-      tickLayout();
-      draw();
+      try {
+        tickLayout();
+        maintainPinnedNodeAnchor();
+        draw();
+      } catch (error) {
+        console.warn("Wordlinks mobile layout paused after error:", error);
+        reseedLayoutCoordinatesOnly(false);
+      }
       requestAnimationFrame(animationLoop);
     }
 
-    function fitGraph(targetIds) {
+    function fitGraph(targetIds, retry = true) {
       const rect = canvas.getBoundingClientRect();
       const visible = targetIds?.length ? targetIds.map((id) => nodesById.get(id)).filter(isNodeGraphVisible) : nodes.filter(isNodeGraphVisible);
       if (!visible.length || !rect.width || !rect.height) return;
       const xs = visible.map((node) => node.x);
       const ys = visible.map((node) => node.y);
       const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+      if (![minX, maxX, minY, maxY].every(Number.isFinite) || Math.max(Math.abs(minX), Math.abs(maxX), Math.abs(minY), Math.abs(maxY)) > MAX_GRAPH_COORD) {
+        console.warn("Wordlinks mobile Fit recovered invalid layout bounds.");
+        reseedLayoutCoordinatesOnly();
+        if (retry) fitGraph(targetIds, false);
+        return;
+      }
       const spanX = Math.max(80, maxX - minX);
       const spanY = Math.max(80, maxY - minY);
       const scale = Math.max(0.12, Math.min(2.2, Math.min((rect.width - 44) / spanX, (rect.height - 44) / spanY)));
@@ -1725,12 +2475,14 @@
         refreshConnectionSelect();
         selectNode(selectedId);
       }
+      renderFilterResults();
       if (isInspectorOpen()) showFullRow();
       updateStatus("Saved mobile edit locally.");
     }
 
     function clearSelection() {
       if (!confirmInspectorDiscardForSelection("", "")) return;
+      if (pinnedNodeId) releasePinnedNode();
       selectedType = "";
       selectedId = "";
       document.getElementById("selectedTitle").textContent = "No word selected";
@@ -1741,6 +2493,8 @@
       document.getElementById("fullRowView").hidden = true;
       setInspectorDirty(false);
       document.getElementById("centerButton").disabled = true;
+      updatePinButton();
+      renderFilterResults();
       needsDraw = true;
     }
 
@@ -1749,6 +2503,7 @@
       if (!node) return;
       const sameSelection = selectedType === "node" && selectedId === id;
       if (!sameSelection && !confirmInspectorDiscardForSelection("node", id)) return;
+      if (!sameSelection && pinnedNodeId) releasePinnedNode();
       const inspectorWasOpen = isInspectorOpen();
       selectedType = "node";
       selectedId = id;
@@ -1763,6 +2518,7 @@
       );
       setSelectedMeta(metadata);
       document.getElementById("centerButton").disabled = !isNodeGraphVisible(node);
+      updatePinButton();
       showCompactSummary();
       if (!sameSelection || !inspectorDirty) showFullRow();
       if (center && isNodeGraphVisible(node)) {
@@ -1770,6 +2526,7 @@
         transform.x = rect.width / 2 - node.x * transform.scale;
         transform.y = rect.height / 2 - node.y * transform.scale;
       }
+      renderFilterResults();
       needsDraw = true;
     }
 
@@ -1778,6 +2535,7 @@
       if (!edge) return;
       const sameSelection = selectedType === "edge" && selectedId === id;
       if (!sameSelection && !confirmInspectorDiscardForSelection("edge", id)) return;
+      if (!sameSelection && pinnedNodeId) releasePinnedNode();
       const inspectorWasOpen = isInspectorOpen();
       const source = nodesById.get(edge.from);
       const target = nodesById.get(edge.to);
@@ -1798,8 +2556,10 @@
       );
       setSelectedMeta(metadata);
       document.getElementById("centerButton").disabled = true;
+      updatePinButton();
       showCompactSummary();
       if (!sameSelection || !inspectorDirty) showFullRow();
+      renderFilterResults();
       needsDraw = true;
     }
 
@@ -1815,16 +2575,22 @@
     function hitTest(clientX, clientY) {
       const rect = canvas.getBoundingClientRect();
       const world = screenToWorld({ x: clientX - rect.left, y: clientY - rect.top });
+      const nodeHitPadding = 12 / transform.scale;
       for (let index = nodes.length - 1; index >= 0; index -= 1) {
         const node = nodes[index];
         if (!isNodeGraphVisible(node)) continue;
         const box = fallbackNodeBox(node);
-        if (world.x >= box.x && world.x <= box.x + box.width && world.y >= box.y && world.y <= box.y + box.height) {
+        if (
+          world.x >= box.x - nodeHitPadding &&
+          world.x <= box.x + box.width + nodeHitPadding &&
+          world.y >= box.y - nodeHitPadding &&
+          world.y <= box.y + box.height + nodeHitPadding
+        ) {
           return { type: "node", item: node };
         }
       }
       let bestEdge = null;
-      let bestDistance = 12 / transform.scale;
+      let bestDistance = 8 / transform.scale;
       edges.filter(isEdgeGraphVisible).forEach((edge) => {
         const a = nodesById.get(edge.from);
         const b = nodesById.get(edge.to);
@@ -1899,6 +2665,14 @@
       transform.x = point.x - world.x * transform.scale;
       transform.y = point.y - world.y * transform.scale;
       needsDraw = true;
+    }, { passive: false });
+
+    let lastTouchEndAt = 0;
+    document.addEventListener("touchend", (event) => {
+      if (event.target.closest?.("input, textarea, select")) return;
+      const now = Date.now();
+      if (now - lastTouchEndAt < 320) event.preventDefault();
+      lastTouchEndAt = now;
     }, { passive: false });
 
     function updateStatus(message) {
@@ -2164,6 +2938,7 @@
       });
       saveChanges();
       refreshConnectionSelect();
+      renderFilterResults();
       document.getElementById("qcModal").hidden = true;
       document.getElementById("qcText").value = "";
       document.getElementById("qcIssues").innerHTML = "";
@@ -2244,8 +3019,43 @@
       if (!event.target.value) return;
       window.setTimeout(() => event.target.select(), 0);
     });
-    document.getElementById("fitButton").addEventListener("click", () => fitGraph());
+    document.getElementById("fitButton").addEventListener("click", () => {
+      if (pinnedNodeId) releasePinnedNode();
+      fitGraph();
+    });
+    document.getElementById("pinButton").addEventListener("click", togglePinNode);
+    document.getElementById("tightenButton").addEventListener("click", tightenSelectedNeighbors);
     document.getElementById("centerButton").addEventListener("click", () => selectedType === "node" && selectedId && selectNode(selectedId, true));
+    document.getElementById("degreeFilterInput").addEventListener("blur", applyDegreeFilterFromInput);
+    document.getElementById("degreeFilterInput").addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      event.target.blur();
+      applyDegreeFilterFromInput();
+    });
+    document.getElementById("degreeFilterMode").addEventListener("change", () => {
+      const validation = validateDegreeText(document.getElementById("degreeFilterInput").value);
+      if (validation.active) applyDegreeFilterFromInput();
+      else if (!document.getElementById("degreeFilterInput").value.trim()) filterState.mode = document.getElementById("degreeFilterMode").value || "exactly";
+    });
+    document.getElementById("rangeFilterInput").addEventListener("blur", applyRangeFilterFromInput);
+    document.getElementById("rangeFilterInput").addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      event.target.blur();
+      applyRangeFilterFromInput();
+    });
+    document.getElementById("clusterFilterInput").addEventListener("input", applyClusterFilterFromInput);
+    document.getElementById("clusterFilterInput").addEventListener("change", applyClusterFilterFromInput);
+    document.getElementById("clusterFilterInput").addEventListener("focus", refreshClusterFilterOptions);
+    document.getElementById("clearFilterButton").addEventListener("click", clearFilters);
+    document.getElementById("filterResults").addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-node-id]");
+      if (!button) return;
+      selectNode(button.dataset.nodeId, false);
+      switchTab("inspect");
+      window.setTimeout(() => document.getElementById("fullRowView").scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" }), 0);
+    });
 
     function exportPlainText() {
       const wordAdditions = changes.additions.filter((addition) => addition.wordRow).map((addition) => addition.wordRow);
@@ -2371,6 +3181,8 @@
       return row.display_text || row.word_id || edit.rowId;
     }
 
+    document.getElementById("reinitLayoutButton").addEventListener("click", reinitializeLayout);
+
     document.getElementById("exportButton").addEventListener("click", async () => {
       const text = exportPlainText();
       const box = document.getElementById("exportText");
@@ -2395,7 +3207,7 @@
       }
       if (!confirm("Reset all mobile changes stored on this device?")) return;
       localStorage.removeItem(STORAGE_KEY);
-      changes = { additions: [], domainAdditions: [], qcEntries: [], globalOverridesText: "", edits: { words: {}, connections: {} }, domainEdits: {}, lastSaved: "" };
+      changes = { additions: [], domainAdditions: [], qcEntries: [], globalOverridesText: "", layoutPositions: {}, edgeComfortOverrides: {}, edits: { words: {}, connections: {} }, domainEdits: {}, lastSaved: "" };
       location.reload();
     });
 
@@ -2439,6 +3251,7 @@
     seedLayout();
     refreshConnectionSelect();
     renderDomainList();
+    renderFilterResults();
     document.getElementById("globalOverrides").value = changes.globalOverridesText || "";
     updateStatus();
     requestAnimationFrame(animationLoop);
